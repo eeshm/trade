@@ -107,6 +107,20 @@
         "typescript": "5.9.2",
       },
     },
+    "packages/env": {
+      "name": "@repo/env",
+      "version": "0.1.0",
+      "dependencies": {
+        "zod": "^3.22.4",
+      },
+      "devDependencies": {
+        "@repo/eslint-config": "*",
+        "@repo/typescript-config": "*",
+        "@types/node": "^22.15.3",
+        "eslint": "^9.39.1",
+        "typescript": "5.9.2",
+      },
+    },
     "packages/eslint-config": {
       "name": "@repo/eslint-config",
       "version": "0.0.0",
@@ -314,6 +328,8 @@
     "@repo/config": ["@repo/config@workspace:packages/config"],
 
     "@repo/db": ["@repo/db@workspace:packages/db"],
+
+    "@repo/env": ["@repo/env@workspace:packages/env"],
 
     "@repo/eslint-config": ["@repo/eslint-config@workspace:packages/eslint-config"],
 
@@ -830,6 +846,8 @@
     "ws": ["ws@workspace:apps/ws"],
 
     "yocto-queue": ["yocto-queue@0.1.0", "", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
+
+    "zod": ["zod@3.25.76", "", {}, "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="],
 
     "@eslint-community/eslint-utils/eslint-visitor-keys": ["eslint-visitor-keys@3.4.3", "", {}, "sha512-wpc+LXeiyiisxPlEkUzU6svyS1frIO3Mgxj1fdy7Pm8Ygzguax2N3Fa/D/ag1WqbOprdI+uY6wMUl8/a2G+iag=="],
 

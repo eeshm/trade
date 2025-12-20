@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "lib": ["es2022", "DOM", "DOM.Iterable"],
+    "module": "NodeNext",
+    "moduleDetection": "force",
+    "moduleResolution": "NodeNext",
+    "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2022"
+  },
+  "references": [
+    { "path": "apps/api" },
+    { "path": "apps/web" },
+    { "path": "apps/workers" },
+    { "path": "apps/ws" },
+    { "path": "packages/auth" },
+    { "path": "packages/config" },
+    { "path": "packages/db" },
+    { "path": "packages/env" },
+    { "path": "packages/events" },
+    { "path": "packages/pricing" },
+    { "path": "packages/redis" },
+    { "path": "packages/trading" },
+    { "path": "packages/ui" },
+    { "path": "packages/utils" }
+  ]
+}
