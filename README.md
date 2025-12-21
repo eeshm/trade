@@ -24,3 +24,5 @@ It does not own business logic or infrastructure details.”
 
 “All database access lives in packages/db.
 Apps consume DB functionality through exported functions only.”
+
+“Redis is infrastructure. Infrastructure is centralized.”

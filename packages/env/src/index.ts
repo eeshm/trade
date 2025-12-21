@@ -58,20 +58,17 @@ export const tradingEnvSchema = z.object({
 /**
  * Parse and validate environment variables
  */
-export function parseEnv<T extends z.ZodType>(schema: T): z.infer<T> {
-  try {
+export function parseEnv <T extends z.ZodType> (schema: T) :z.infer<T>{
+  try{
     return schema.parse(process.env);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      const issues = error.errors
-        .map((e) => `${e.path.join('.')}: ${e.message}`)
-        .join('\n');
+  }catch(error){
+    if(error instanceof z.ZodError){
+      const issues =  error.errors.map((e)=> `- ${e.path.join('.')}: ${e.message}`).join('\n');
       throw new Error(`Environment validation failed:\n${issues}`);
     }
     throw error;
   }
-}
-
+} 
 /**
  * Combined schema for full app initialization
  */

@@ -8,28 +8,25 @@ let prisma: PrismaClient | null = null;
  * Initialize Prisma Client with proper error handling
  * Fails fast if database connection cannot be established
  */
-export const initDb = async (): Promise<void> => {
-  if (prisma) return;
+export const initDb = async(): Promise<void> =>{
+  if(prisma) return;
 
-  try {
+  const env = parseEnv(baseEnvSchema);
+  try{
     prisma = new PrismaClient({
       log: process.env.NODE_ENV === 'development' ? ['info', 'warn', 'error'] : ['error'],
-    });
+    })
 
-    // Test connectivity
     await prisma.$queryRaw`SELECT 1`;
     console.log('Database connection established');
-  } catch (error) {
+  }catch(error){
     await prisma?.$disconnect();
-    prisma = null;
+    prisma= null;
     throw new Error(`Failed to connect to Postgres: ${(error as Error).message}`);
   }
-};
+  
+}
 
-/**
- * Get Prisma Client instance
- * Must call initDb() first
- */
 export const getDb = (): PrismaClient => {
   if (!prisma) throw new Error('Prisma client not initialized. Call initDb() first.');
   return prisma;
@@ -59,6 +56,5 @@ export const shutdownDb = async (): Promise<void> => {
   console.log('Database connection closed');
 };
 
-// Export Prisma types for consumers
 export { PrismaClient } from '@prisma/client';
 export type { Prisma } from '@prisma/client';

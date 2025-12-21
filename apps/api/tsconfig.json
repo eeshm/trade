@@ -4,9 +4,7 @@
     "composite": true,
     "incremental": true,
     "outDir": "./dist",
-    "rootDir": "./src",
-    "allowImportingTsExtensions": true,
-    "noEmit": true
+    "rootDir": "./src"
   },
   "include": [
     "src/**/*.ts"
