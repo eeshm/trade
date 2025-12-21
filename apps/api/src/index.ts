@@ -1,16 +1,16 @@
-import express from 'express';
-import type { Express } from 'express';
-import { initDb, checkDbHealth, shutdownDb } from '@repo/db';
-import { requestIdMiddleware, errorHandler } from './middlewares/index.ts';
+import express from "express";
+import type { Express } from "express";
+import { initDb, checkDbHealth, shutdownDb } from "@repo/db";
+import { requestIdMiddleware, errorHandler } from "./middlewares/index.js";
+import { isRedisHealthy, initRedis } from "@repo/redis";
 
-console.log('API module loaded, starting initialization...');
-
+console.log("API module loaded, starting initialization...");
 
 export function createApp(): Express {
   const app = express();
 
   // Essential Middleware
-  
+
   // 1. JSON body parsing
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -19,14 +19,30 @@ export function createApp(): Express {
   app.use(requestIdMiddleware);
 
   // Health check endpoint
-  app.get('/health', async (_req, res) => {
-    const db = await checkDbHealth();
+  app.get("/health", async (_req, res) => {
 
-    if (!db.ok) {
-      return res.status(503).json({ status: 'degraded', db });
+    const withTimeout:any = (promise : Promise<any>, ms: number) => {
+      Promise.race([promise, new Promise((_,reject)=>
+      setTimeout(() => reject(new Error("Timeout")), ms)
+    )])
+  };
+
+    const [db, redisHealthy]= await Promise.all([
+      withTimeout(checkDbHealth(), 5000),
+      withTimeout(isRedisHealthy(), 5000)
+    ])
+
+    if (!redisHealthy) {
+      return res.status(503).json({ status: "degraded", redis: "unhealthy" });
     }
 
-    return res.status(200).json({ status: 'ok', db });
+    if (!db.ok) {
+      return res.status(503).json({ status: "degraded", db });
+    }
+
+    return res
+      .status(200)
+      .json({ dbHealth: "healthy", db, redisHealth: "healthy", redisHealthy });
   });
 
   // 3. Centralized error handler (must be last)
@@ -35,14 +51,17 @@ export function createApp(): Express {
   return app;
 }
 
-const isMainModule = process.argv[1]?.includes('index.ts') || process.argv[1]?.includes('index.js');
+const isMainModule =
+  process.argv[1]?.includes("index.ts") ||
+  process.argv[1]?.includes("index.js");
 
 if (isMainModule) {
   const start = async () => {
     try {
       await initDb();
+      await initRedis();
     } catch (error) {
-      console.error('Failed to initialize database connection', error);
+      console.error("Failed to initialize critical dependencies", error);
       process.exit(1);
     }
 
@@ -61,8 +80,8 @@ if (isMainModule) {
       });
     };
 
-    process.on('SIGTERM', () => void shutdown('SIGTERM'));
-    process.on('SIGINT', () => void shutdown('SIGINT'));
+    process.on("SIGTERM", () => void shutdown("SIGTERM"));
+    process.on("SIGINT", () => void shutdown("SIGINT"));
   };
 
   void start();

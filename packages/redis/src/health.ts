@@ -1,6 +1,6 @@
-import client  from "./client.ts";
+import client  from "./client.js";
 
-export async function isRedisHealthy() : Promise<boolean> {
+export  async function isRedisHealthy() : Promise<boolean> {
     try {
         await client.ping();
         return true;

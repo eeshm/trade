@@ -19,29 +19,21 @@ const PRICE = {
 
 // WebSocket Domain
 const WEBSOCKET = {
-  userSession: (walletAddress: string) =>
-    `${APP}:ws:user:${walletAddress}`,
-  userConnections: (walletAddress: string) =>
-    `${APP}:ws:connections:${walletAddress}`,
+  userSession: (walletAddress: string) => `${APP}:ws:user:${walletAddress}`,
+  userConnections: (walletAddress: string) => `${APP}:ws:connections:${walletAddress}`,
 };
 
 // Rate Limiting Domain
 const RATELIMIT = {
-  walletRequests: (walletAddress: string) =>
-    `${APP}:ratelimit:${walletAddress}`,
-  apiKey: (apiKey: string) => `${APP}:ratelimit:api:${apiKey}`,
+    walletRequests : (walletAddress: string)=> `${APP}:ratelimit:wallet:${walletAddress}`,
+    apiRequests : (apiRequestId: string) => `${APP}:ratelimit:api:${apiRequestId}`,
 };
-
 // Trading Domain
 const TRADING = {
-  userPortfolio: (walletAddress: string) =>
-    `${APP}:trading:portfolio:${walletAddress}`,
-  position: (walletAddress: string, positionId: string) =>
-    `${APP}:trading:position:${walletAddress}:${positionId}`,
-  openPositions: (walletAddress: string) =>
-    `${APP}:trading:positions:open:${walletAddress}`,
-  closedPositions: (walletAddress: string) =>
-    `${APP}:trading:positions:closed:${walletAddress}`,
+  userPortfolio: (walletAddress: string) => `${APP}:trading:portfolio:${walletAddress}`,
+  position: (walletAddress: string, positionId: string) => `${APP}:trading:position:${walletAddress}:${positionId}`,
+  openPositions: (walletAddress: string) => `${APP}:trading:positions:open:${walletAddress}`,
+  closedPositions: (walletAddress: string) => `${APP}:trading:positions:closed:${walletAddress}`,
 };
 
 // Cache Domain
