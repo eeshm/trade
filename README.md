@@ -26,3 +26,12 @@ It does not own business logic or infrastructure details.”
 Apps consume DB functionality through exported functions only.”
 
 “Redis is infrastructure. Infrastructure is centralized.”
+
+
+"Before touching tables or code, define these rules:
+Wallet address is the unique user identity
+One wallet = one user
+Users are created lazily (on first login)
+Authentication = signature verification
+Authorization = session validation
+These rules will guide every future decision."

@@ -12,9 +12,38 @@ datasource db {
 
 // Health check table - simple table for verifying database connectivity
 model HealthCheck {
-  id        Int     @id @default(autoincrement())
-  status    String  @default("ok")
+  id        Int      @id @default(autoincrement())
+  status    String   @default("ok")
   timestamp DateTime @default(now()) @updatedAt
 
   @@map("health_check")
+}
+
+model Users {
+  id            Int       @id @default(autoincrement())
+  walletAddress String    @unique @db.VarChar(255)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  sessions      Sessions[]
+  
+  @@index([walletAddress])
+  @@map("users")
+}
+
+model Sessions {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  user      Users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  token     String  @unique @db.VarChar(512)
+  expiresAt DateTime
+  revokedAt DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([token])
+  @@index([userId, revokedAt])
+  @@map("sessions")
 }
