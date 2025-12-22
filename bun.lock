@@ -40,6 +40,8 @@
       "version": "0.1.0",
       "dependencies": {
         "@noble/ed25519": "^3.0.0",
+        "@repo/db": "*",
+        "@repo/redis": "*",
         "bs58": "^6.0.0",
       },
       "devDependencies": {

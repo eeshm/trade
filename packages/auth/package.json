@@ -19,6 +19,8 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
+    "@repo/db": "*",
+    "@repo/redis": "*",
     "@noble/ed25519": "^3.0.0",
     "bs58": "^6.0.0"
   }
