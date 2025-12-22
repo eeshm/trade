@@ -38,16 +38,14 @@ const TRADING = {
 
 // Cache Domain
 const CACHE = {
-  userProfile: (walletAddress: string) =>
-    `${APP}:cache:profile:${walletAddress}`,
+  userProfile: (walletAddress: string) => `${APP}:cache:profile:${walletAddress}`,
   marketData: (symbol: string) => `${APP}:cache:market:${symbol}`,
 };
 
 // Session Domain
 const SESSION = {
   userSession: (sessionId: string) => `${APP}:session:${sessionId}`,
-  userTokens: (walletAddress: string) =>
-    `${APP}:session:tokens:${walletAddress}`,
+  userTokens: (walletAddress: string) => `${APP}:session:tokens:${walletAddress}`,
 };
 
 export const redisKeys = {

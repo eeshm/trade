@@ -250,6 +250,38 @@ turbo run build --graph   # Visualize dependency graph
 - [packages/db/src/index.ts](packages/db/src/index.ts) — Singleton pattern
 - [apps/api/src/index.ts](apps/api/src/index.ts) — Startup flow
 - [turbo.json](turbo.json) — Build configuration
+- [packages/redis/src/keys.ts](packages/redis/src/keys.ts) — Redis key naming strategy
+
+---
+
+## Redis Key Reference
+
+All Redis keys follow the pattern: `trading:<domain>:<entity>:<id>`
+
+| Domain | Key Pattern | Purpose |
+|--------|-------------|---------|
+| **Price** | `trading:price:SOL` | Store current SOL price |
+| **Price** | `trading:price:{symbol}` | Store token prices |
+| **Session** | `trading:session:{token}` | Cache session data (user ID, session ID) |
+| **Session** | `trading:session:tokens:{walletAddress}` | Track user's session tokens |
+| **WebSocket** | `trading:ws:user:{walletAddress}` | Track WS connections per user |
+| **WebSocket** | `trading:ws:connections:{walletAddress}` | List active connections |
+| **RateLimit** | `trading:ratelimit:wallet:{walletAddress}` | Rate limit per wallet |
+| **RateLimit** | `trading:ratelimit:api:{requestId}` | Rate limit per API request |
+| **Trading** | `trading:trading:portfolio:{walletAddress}` | User's portfolio cache |
+| **Trading** | `trading:trading:position:{walletAddress}:{positionId}` | Individual position cache |
+| **Trading** | `trading:trading:positions:open:{walletAddress}` | List of open positions |
+| **Trading** | `trading:trading:positions:closed:{walletAddress}` | List of closed positions |
+| **Cache** | `trading:cache:profile:{walletAddress}` | User profile cache |
+| **Cache** | `trading:cache:market:{symbol}` | Market data cache |
+
+**Usage**: Import from `@repo/redis`:
+```typescript
+import { redisKeys } from '@repo/redis';
+
+const sessionKey = redisKeys.SESSION.userSession(token);
+const priceKey = redisKeys.PRICE.solPrice();
+```
 
 ---
 
@@ -262,6 +294,7 @@ turbo run build --graph   # Visualize dependency graph
 ❌ No atomic transaction in financial operations  
 ❌ Silent error handling (should fail fast)  
 ❌ Cross-package imports from apps/ (should go through packages/)  
+❌ Using hardcoded Redis keys instead of `redisKeys` helper  
 
 ---
 
