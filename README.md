@@ -35,3 +35,15 @@ Users are created lazily (on first login)
 Authentication = signature verification
 Authorization = session validation
 These rules will guide every future decision."
+
+
+
+Truth before trading logic
+(these must always hold:)
+- A user can never spend more than their balance
+- Every trade is auditable
+- Balances must be derivable from history (at least logically)
+- Orders are intent, trades are execution
+- Postgres is the source of truth
+- Redis is never authoritative
+If a schema violates these → it’s wrong.

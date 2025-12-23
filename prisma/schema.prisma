@@ -26,6 +26,10 @@ model Users {
   updatedAt     DateTime  @updatedAt
   
   sessions      Sessions[]
+  balances      Balances[]
+  orders        Orders[]
+  trades        Trades[]
+  positions     Positions[]
   
   @@index([walletAddress])
   @@map("users")
@@ -46,4 +50,108 @@ model Sessions {
   @@index([token])
   @@index([userId, revokedAt])
   @@map("sessions")
+}
+
+// ===== TRADING TABLES =====
+
+/**
+ * Balances: Current spendable funds per user per asset
+ * Invariant: available >= 0, locked >= 0
+ * Initial: 10,000 USD + 0 SOL per user
+ */
+model Balances {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  user      Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  asset     String    @db.VarChar(20)
+  available Decimal   @db.Numeric(20, 8)
+  locked    Decimal   @db.Numeric(20, 8)
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  @@unique([userId, asset])
+  @@index([userId])
+  @@map("balances")
+}
+
+/**
+ * Orders: User trading intent (immutable audit log)
+ * Market orders only
+ * Status: pending → filled or rejected
+ */
+model Orders {
+  id                Int       @id @default(autoincrement())
+  userId            Int
+  user              Users     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  
+  side              String    @db.VarChar(10)
+  type              String    @db.VarChar(20)
+  baseAsset         String    @db.VarChar(20)
+  quoteAsset        String    @db.VarChar(20)
+  requestedSize     Decimal   @db.Numeric(20, 8)
+  priceAtOrderTime  Decimal   @db.Numeric(20, 8)
+  status            String    @db.VarChar(20)
+  
+  feesApplied       Decimal   @db.Numeric(20, 8)  @default(0)  // Actual fees charged
+  rejectionReason   String?   @db.VarChar(255)
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  trades            Trades[]
+  
+  @@index([userId, createdAt])
+  @@index([status])
+  @@index([baseAsset])
+  @@map("orders")
+}
+
+/**
+ * Trades: Execution facts (append-only, immutable)
+ * Every trade references an order
+ * Fee: 0.1% of trade value (MUST be validated on INSERT)
+ * Prices from Jupiter/Pyth
+ */
+model Trades {
+  id            Int       @id @default(autoincrement())
+  orderId       Int
+  order         Orders    @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  
+  userId        Int
+  user          Users     @relation(fields: [userId], references: [id], onDelete: Restrict)
+  
+  side          String    @db.VarChar(10)
+  executedPrice Decimal   @db.Numeric(20, 8)
+  executedSize  Decimal   @db.Numeric(20, 8)
+  fee           Decimal   @db.Numeric(20, 8)
+  
+  createdAt     DateTime  @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([orderId])
+  @@index([side])
+  @@map("trades")
+}
+
+/**
+ * Positions: Current holdings (derived from trades, stored for speed)
+ * Updated atomically with trades
+ * Asset: SOL (USD is in Balances)
+ */
+model Positions {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  user          Users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  asset         String    @db.VarChar(20)
+  size          Decimal   @db.Numeric(20, 8)
+  avgEntryPrice Decimal   @db.Numeric(20, 8)
+  
+  updatedAt     DateTime  @updatedAt
+  
+  @@unique([userId, asset])
+  @@index([userId])
+  @@map("positions")
 }

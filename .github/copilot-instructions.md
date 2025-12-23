@@ -286,16 +286,74 @@ const priceKey = redisKeys.PRICE.solPrice();
 
 ---
 
+## Trading Invariants (Must Be Enforced in Code)
+
+**These cannot rely on Postgres alone—application layer is responsible.**
+
+### Balance Integrity
+- **`available >= 0` and `locked >= 0`** at all times  
+  - Where: Before any UPDATE to balances in `placeOrder()`, `fillOrder()`  
+  - Bug if violated: User balance goes negative, USD vanishes, ledger breaks  
+  - Prevention: Use `SELECT ... FOR UPDATE` (row-level lock) in transaction  
+
+### Order Validation
+- **`requestedSize > 0`** — No zero-size orders  
+  - Where: `placeOrder()` input validation  
+  - Bug if violated: Division by zero in fee calculation  
+  
+- **`side IN ('buy', 'sell')`** — Only valid sides  
+  - Where: `placeOrder()` validation with constants  
+  - Bug if violated: Invalid orders in DB, reporting broken, auditing fails  
+  
+- **Status transitions only: `pending` → `{filled, rejected}`**  
+  - Where: Order state machine in `fillOrder()`, `rejectOrder()`  
+  - Bug if violated: Duplicate fills, cancelled orders refilled, double-spend  
+
+### Trade Execution
+- **`fee == 0.1% * executedPrice * executedSize` (exactly)**  
+  - Where: Before INSERT into trades in `fillOrder()`  
+  - Bug if violated: Platform bleeds money or overcharges (every trade compounds)  
+  - Example: 1,000 trades with fee=$0 instead of $10 = -$10,000 loss  
+  
+- **`executedPrice > 0` and `executedSize > 0`**  
+  - Where: `fillOrder()` validation  
+  - Bug if violated: Negative-price trades, negative quantity positions  
+
+### Position Consistency
+- **`size >= 0`** after every fill (total bought - sold)  
+  - Where: `fillOrder()` after updating position  
+  - Bug if violated: Unintended short selling, P&L calculations wrong  
+  
+- **Balances + Positions atomic** — both updated in single transaction  
+  - Where: `fillOrder()` within `prisma.$transaction()`  
+  - Bug if violated: User has cash balance but no position (funds stuck), or position with no cash (fake wealth)  
+
+### Data Immutability
+- **Trades are append-only** — No UPDATE/DELETE  
+  - Implement: REVOKE UPDATE/DELETE from app role in Postgres  
+  - Bug if violated: Audit trail corrupted, P&L wrong, compliance violations  
+
+### Fee Tracking
+- **`feesApplied` field logged in Orders**  
+  - Tracks actual fees charged to user per order  
+  - Used for: Audit disputes, revenue tracking, P&L calculations  
+
+---
+
 ## Red Flags (Code Review Checklist)
 
 ❌ App directly imports PrismaClient  
 ❌ DB query in a route handler (should be in service)  
 ❌ Hardcoded Redis/DB connection strings (use .env)  
 ❌ Unhandled promise rejections in startup  
-❌ No atomic transaction in financial operations  
+❌ **No `SELECT ... FOR UPDATE` in balance deduction** (race condition!)  
+❌ **Fee calculation not validated before INSERT**  
+❌ **Order status not validated against state machine**  
+❌ **Balance/position updates not in same transaction** (ledger split!)  
 ❌ Silent error handling (should fail fast)  
 ❌ Cross-package imports from apps/ (should go through packages/)  
 ❌ Using hardcoded Redis keys instead of `redisKeys` helper  
+❌ Stores prices without server timestamp (client time = no audit)  
 
 ---
 
