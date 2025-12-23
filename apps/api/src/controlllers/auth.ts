@@ -8,8 +8,7 @@ import {
   generateNonce,
   validateAndConsumeNonce,
 } from "@repo/auth";
-import { error } from "console";
-import { sign } from "crypto";
+
 
 /**
  * GET /auth/nonce
