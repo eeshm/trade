@@ -17,7 +17,7 @@
   "dependencies": {
     "@repo/db": "*",
     "@repo/redis": "*",
-    "decimal.js": "^10.4.3"
+    "decimal.js": "^10.6.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "*",
