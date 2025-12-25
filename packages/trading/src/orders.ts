@@ -12,7 +12,7 @@ import { ORDER_STATUS } from "./constants.js";
 
 interface PlaceOrderResult {
   orderId: number;
-  feeApplied: Decimal;
+  feeApplied: string;
 }
 /**
  * Place a market order
@@ -33,7 +33,12 @@ export async function placeOrder(
   const size = new Decimal(requestedSize);
   const price = new Decimal(priceAtOrderTime);
 
-  const cost = size.mul(price);
+  // Validate price > 0
+  if (price.lte(0)) {
+    throw new Error("Price must be > 0");
+  }
+
+  const cost = size.times(price);
   const fees = calculateFee(price, size);
   const totalNeeded = cost.plus(fees);
 
@@ -51,10 +56,11 @@ export async function placeOrder(
 
     if (available.lt(totalNeeded)) {
       throw new Error(
-        `Insufficient balance. Need ${totalNeeded} ${quoteAsset}, ` +
-          `but have ${available}`
+        `Insufficient balance. Need ${totalNeeded.toString()} ${quoteAsset}, ` +
+          `but have ${available.toString()}`
       );
     }
+
     const order = await tx.orders.create({
       data: {
         userId,
@@ -65,19 +71,20 @@ export async function placeOrder(
         requestedSize: size.toString(),
         priceAtOrderTime: price.toString(),
         status: ORDER_STATUS.PENDING,
-        feeApplied: fees,  // To be set fill time, not here
+        feeApplied: fees.toString(),
       },
     });
+
     // Deduct from available balance
     await tx.balances.update({
       where: { userId_asset: { userId, asset: quoteAsset } },
       data: {
-        available: available.sub(totalNeeded).toString(),
-        locked:locked.plus(cost).toString(),
+        available: available.minus(totalNeeded).toString(),
+        locked: locked.plus(cost).toString(),
       },
     });
 
-    return { orderId: order.id, feeApplied: fees };
+    return { orderId: order.id, feeApplied: fees.toString() };
   });
   return result;
 }
