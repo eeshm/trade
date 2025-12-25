@@ -2,7 +2,6 @@
  * Fee Calculation
  * Handles fee computation and validation (0.1% per trade)
  */
-import Decimal from "decimal.js";
 import type { Decimal as DecimalInstance } from "decimal.js";
 import { FEE_RATE } from './constants.js';
 
