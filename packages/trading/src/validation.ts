@@ -3,8 +3,8 @@
  * Input validation and invariant checks before database writes
  */
 
-import type { Decimal as DecimalIntsance } from "decimal.js";
 import Decimal from "decimal.js";
+import type { Decimal as DecimalIntsance } from "decimal.js";
 import { ORDER_SIDE, ORDER_STATUS, ORDER_TYPE } from "./constants.js";
 /**
  * Validate order placement parameters
