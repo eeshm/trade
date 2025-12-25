@@ -65,7 +65,7 @@ export async function placeOrder(
         requestedSize: size.toString(),
         priceAtOrderTime: price.toString(),
         status: ORDER_STATUS.PENDING,
-        feeApplied: null,  // To be set fill time, not here
+        feeApplied: fees,  // To be set fill time, not here
       },
     });
     // Deduct from available balance
