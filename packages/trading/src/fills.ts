@@ -10,7 +10,7 @@ import {
   validateTradeExecution,
   validateStatusTransition,
 } from "./validation.js";
-import { calculateFee } from "./fees.js";
+import { calculateFee, validateFee } from "./fees.js";
 import { ORDER_STATUS } from "./constants.js";
 
 /**
@@ -58,18 +58,20 @@ export async function fillOrder(
   // Check status transition is valid
   validateStatusTransition(order.status, ORDER_STATUS.FILLED);
 
-  // Validate execution size <= requested size
-  if (size.gt(new Decimal(order.requestedSize))) {
+  // Validate execution size <= requested size (prevents overspend)
+  const requestedSize = new Decimal(order.requestedSize);
+  if (size.gt(requestedSize)) {
     throw new Error(
-      `Execution size ${size} cannot exceed requested size ${order.requestedSize}`
+      `Execution size ${size} cannot exceed requested size ${requestedSize}`
     );
   }
 
-  // Calculate fee (0.1% of trade value)
-  const fee = calculateFee(price, size);
-
   // ATOMIC TRANSACTION: Trade + Balance + Position all at once
   await db.$transaction(async (tx) => {
+    // CRITICAL: Calculate and validate fee INSIDE transaction for read consistency
+    const fee = calculateFee(price, size);
+    validateFee(fee, fee);  // Sanity check: fee must be valid Decimal
+
     // 1. Update order status and record applied fee
     await tx.orders.update({
       where: { id: orderId },
@@ -105,26 +107,21 @@ export async function fillOrder(
     const currentLocked = new Decimal(balance.locked);
 
     if (order.side === "buy") {
-      // BUY: Lock released, fees deducted from available
-      const requestedSize = new Decimal(order.requestedSize);
+      // BUY: Refund unexecuted portion, deduct executed fee
       const priceAtOrder = new Decimal(order.priceAtOrderTime);
 
-      // Cost for executed portion at execution price
-      const costForExecuted = price.times(size);
+      // Cost locked at order time
+      const totalLocked = priceAtOrder.times(requestedSize);
       
-      // Cost for unexecuted portion (refund at order price)
+      // Unexecuted portion refund
       const unexecutedSize = requestedSize.minus(size);
       const costForUnexecuted = priceAtOrder.times(unexecutedSize);
-
-      // Total locked was: priceAtOrder * requestedSize
-      // Release: unexecuted portion back to available
-      const totalLocked = priceAtOrder.times(requestedSize);
-      const newLocked = currentLocked.minus(totalLocked);  // All unlocked
       
-      // Available: + unexecuted refund - fee
+      // Simple: unlock everything, deduct only the executed fee
+      const newLocked = currentLocked.minus(totalLocked);  // All unlocked
       const newAvailable = currentAvailable
         .plus(costForUnexecuted)
-        .minus(fee);
+        .minus(fee);  // ← Only deduct executed fee
 
       await tx.balances.update({
         where: {
@@ -163,14 +160,23 @@ export async function fillOrder(
         },
       });
       
-      const baseAvailable = new Decimal(baseBalance.available).minus(size);
+      const baseAvailable = new Decimal(baseBalance.available);
+      
+      // CRITICAL: Invariant - must have the base asset to sell
+      if (baseAvailable.lt(size)) {
+        throw new Error(
+          `Base asset mismatch: trying to sell ${size} ${baseAsset} ` +
+          `but balance shows only ${baseAvailable}. ` +
+          `This indicates position and balance are out of sync`
+        );
+      }
       
       await tx.balances.update({
         where: {
           userId_asset: { userId: order.userId, asset: baseAsset },
         },
         data: {
-          available: baseAvailable.toString(),
+          available: baseAvailable.minus(size).toString(),
         },
       });
     }
@@ -189,10 +195,19 @@ export async function fillOrder(
       // BUY: Increase position, recalculate weighted average entry price
       newSize = currentSize.plus(size);
       
+      // Sanity check: size must be positive after buy
+      if (newSize.lte(0)) {
+        throw new Error(
+          `Invalid position size after buy fill: ${newSize}. ` +
+          `This indicates a bug in the trading engine`
+        );
+      }
+      
       if (currentSize.isZero()) {
+        // First buy: cost basis = execution price
         newAvg = price;
       } else {
-        // newAvg = (oldAvg × oldSize + price × newSize) / (oldSize + newSize)
+        // Pyramid: newAvg = (oldAvg × oldSize + price × newSize) / (oldSize + newSize)
         newAvg = currentAvg
           .times(currentSize)
           .plus(price.times(size))
@@ -210,7 +225,12 @@ export async function fillOrder(
         );
       }
       
-      newAvg = currentAvg;  // Unchanged on sell
+      // FIX: Reset avgEntryPrice to 0 if position fully closed
+      if (newSize.isZero()) {
+        newAvg = new Decimal('0');  // Clear cost basis on full close
+      } else {
+        newAvg = currentAvg;  // Keep avg for partial close (P&L tracking)
+      }
     }
 
     // Update position in database

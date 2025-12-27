@@ -73,12 +73,25 @@ export async function updatePosition(
   let newAvg: Decimal;
   if (side === "buy") {
     newSize = currentSize.plus(size);
-    // Recalculate avg entry price
-    // newAvg = (oldAvg * oldSize + price * newSize) / (oldSize + newSize)
-    if (newSize.isZero()) {
+    
+    // Sanity check: size must be positive after buy
+    if (newSize.lte(0)) {
+      throw new Error(
+        `Invalid position size after buy: ${newSize}. ` +
+        `oldSize=${currentSize}, buySize=${size}`
+      );
+    }
+    
+    // Recalculate weighted average entry price
+    if (currentSize.isZero()) {
+      // First buy: cost basis = execution price
       newAvg = price;
     } else {
-      newAvg = currentAvg.times(currentSize).plus(price.times(size)).dividedBy(newSize);
+      // Pyramid: newAvg = (oldAvg * oldSize + price * newSize) / (oldSize + newSize)
+      newAvg = currentAvg
+        .times(currentSize)
+        .plus(price.times(size))
+        .dividedBy(newSize);
     }
   } else {
     newSize = currentSize.minus(size);
@@ -90,10 +103,13 @@ export async function updatePosition(
           `for user ${userId} asset ${asset}`
       );
     }
-    // keep avg entry price for p&l tracking
-    // (It will be used if user buys again later)
-
-    newAvg = currentAvg;
+    
+    // FIX: Reset avgEntryPrice to 0 if position fully closed
+    if (newSize.isZero()) {
+      newAvg = new Decimal('0');  // Clear cost basis on full close
+    } else {
+      newAvg = currentAvg;  // Keep avg for partial close (P&L tracking)
+    }
   }
 
   await tx.positions.update({

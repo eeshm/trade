@@ -16,8 +16,15 @@ interface PlaceOrderResult {
 }
 /**
  * Place a market order
+ * 
  * CRITICAL: Uses SELECT ... FOR UPDATE to prevent race conditions
- * Validates balance, calculates fee, locks balance in ONE transaction
+ * 
+ * Fee model:
+ * - At placement: only LOCK the cost (no fee deducted yet)
+ * - At fill: deduct the actual fee (0.1% of execution value)
+ * - On rejection: full refund of locked cost (no fee lost)
+ * 
+ * This ensures users don't lose fees on cancelled orders.
  */
 
 export async function placeOrder(
@@ -38,9 +45,9 @@ export async function placeOrder(
     throw new Error("Price must be > 0");
   }
 
+  // Cost is locked at placement; fee is deducted only on fill
   const cost = size.times(price);
-  const fees = calculateFee(price, size);
-  const totalNeeded = cost.plus(fees);
+  const estimatedFee = calculateFee(price, size);  // For display only
 
   const db = getDb();
 
@@ -54,9 +61,10 @@ export async function placeOrder(
     const available = new Decimal(balance.available);
     const locked = new Decimal(balance.locked);
 
-    if (available.lt(totalNeeded)) {
+    // Check: sufficient balance for COST ONLY (fee deducted later on fill)
+    if (available.lt(cost)) {
       throw new Error(
-        `Insufficient balance. Need ${totalNeeded.toString()} ${quoteAsset}, ` +
+        `Insufficient balance. Need ${cost.toString()} ${quoteAsset}, ` +
           `but have ${available.toString()}`
       );
     }
@@ -71,20 +79,21 @@ export async function placeOrder(
         requestedSize: size.toString(),
         priceAtOrderTime: price.toString(),
         status: ORDER_STATUS.PENDING,
-        feeApplied: fees.toString(),
+        feesApplied: '0',  // Will be updated on fill
       },
     });
 
-    // Deduct from available balance
+    // Lock only the COST (not the fee)
+    // This ensures full refund on rejection, no fee loss
     await tx.balances.update({
       where: { userId_asset: { userId, asset: quoteAsset } },
       data: {
-        available: available.minus(totalNeeded).toString(),
+        available: available.minus(cost).toString(),
         locked: locked.plus(cost).toString(),
       },
     });
 
-    return { orderId: order.id, feeApplied: fees.toString() };
+    return { orderId: order.id, feeApplied: estimatedFee.toString() };
   });
   return result;
 }
