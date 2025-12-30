@@ -5,7 +5,8 @@ import { requestIdMiddleware, errorHandler } from "./middlewares/index.ts";
 import { isRedisHealthy, initRedis } from "@repo/redis";
 import authRouter from "./routes/auth.ts";
 import orderRouter from "./routes/orders.ts";
-import portfolioRouter from './routes/portfolio.ts'
+import portfolioRouter from "./routes/portfolio.ts";
+import { seedDevelopmentPrices } from "@repo/pricing";
 
 export function createApp(): Express {
   const app = express();
@@ -49,8 +50,8 @@ export function createApp(): Express {
 
   // Routes
   app.use("/auth", authRouter);
-  app.use("/orders",orderRouter);
-  app.use("/portfolio",portfolioRouter);
+  app.use("/orders", orderRouter);
+  app.use("/portfolio", portfolioRouter);
 
   // 3. Centralized error handler (must be last)
   app.use(errorHandler);
@@ -70,6 +71,11 @@ if (isMainModule) {
     } catch (error) {
       console.error("Failed to initialize critical dependencies", error);
       process.exit(1);
+    }
+
+    // Seed development prices (skip in production)
+    if (process.env.NODE_ENV !== "production") {
+      await seedDevelopmentPrices();
     }
 
     const app = createApp();

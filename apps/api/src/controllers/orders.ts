@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { Decimal } from "decimal.js";
 import { placeOrder, getOrder, getUserOrders } from "@repo/trading";
+import { getPrice } from "@repo/pricing";
 
 /**
  * POST /orders
@@ -25,12 +26,21 @@ import { placeOrder, getOrder, getUserOrders } from "@repo/trading";
 
 export async function placeOrderHandler(req: Request, res: Response) {
   try {
-    const { side, baseAsset, quoteAsset, requestedSize, priceAtOrderTime } =
-      req.body;
+    const { side, baseAsset, quoteAsset, requestedSize } = req.body;
     const userId = (req as any).userId; // Assume user ID is set in req.user by auth middleware
+    
+    // Validate required fields
+    if (!side || !baseAsset || !quoteAsset || !requestedSize) {
+      res.status(400).json({
+        success: false,
+        error: "Missing required fields: side, baseAsset, quoteAsset, requestedSize",
+      });
+      return;
+    }
+
 
     const size = new Decimal(requestedSize);
-    const price = new Decimal(priceAtOrderTime);
+    const price = await getPrice(baseAsset);
 
     const result = await placeOrder(
       userId,
@@ -47,6 +57,17 @@ export async function placeOrderHandler(req: Request, res: Response) {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
+
+    // Specific error for price issues
+    if (message.includes("Price not available") || message.includes("stale")) {
+      res.status(503).json({
+        success: false,
+        error: message,
+        code: "PRICE_UNAVAILABLE",
+      });
+      return;
+    }
+
     res.status(400).json({ success: false, error: message });
   }
 }
