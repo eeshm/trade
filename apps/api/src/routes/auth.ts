@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { getNonce, login, logout } from '../controllers/auth.js';
-import { authMiddleware } from '../middlewares/auth.js';
+import { getNonce, login, logout } from '../controllers/auth.ts';
+import { authMiddleware } from '../middlewares/auth.ts';
 
 
 const router :Router = Router();

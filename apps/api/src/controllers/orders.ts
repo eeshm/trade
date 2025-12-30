@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { Decimal } from "decimal.js";
 import { placeOrder, getOrder, getUserOrders } from "@repo/trading";
 

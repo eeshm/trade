@@ -11,6 +11,10 @@
     "lint": "eslint --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
+  "dependencies": {
+    "@repo/redis":"*"
+
+  },
   "devDependencies": {
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",

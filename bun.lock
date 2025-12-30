@@ -129,6 +129,9 @@
     "packages/pricing": {
       "name": "@repo/pricing",
       "version": "0.1.0",
+      "dependencies": {
+        "@repo/redis": "*",
+      },
       "devDependencies": {
         "@repo/eslint-config": "*",
         "@repo/typescript-config": "*",
