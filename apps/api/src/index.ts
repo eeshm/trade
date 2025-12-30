@@ -1,9 +1,11 @@
 import express from "express";
 import type { Express } from "express";
 import { initDb, checkDbHealth, shutdownDb } from "@repo/db";
-import { requestIdMiddleware, errorHandler } from "./middlewares/index.js";
+import { requestIdMiddleware, errorHandler } from "./middlewares/index.ts";
 import { isRedisHealthy, initRedis } from "@repo/redis";
-import authRouter from "./routes/auth.js";
+import authRouter from "./routes/auth.ts";
+import orderRouter from "./routes/orders.ts";
+import portfolioRouter from './routes/portfolio.ts'
 
 export function createApp(): Express {
   const app = express();
@@ -47,6 +49,8 @@ export function createApp(): Express {
 
   // Routes
   app.use("/auth", authRouter);
+  app.use("/orders",orderRouter);
+  app.use("/portfolio",portfolioRouter);
 
   // 3. Centralized error handler (must be last)
   app.use(errorHandler);
