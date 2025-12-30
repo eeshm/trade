@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { Decimal } from "decimal.js";
 import { placeOrder, getOrder, getUserOrders } from "@repo/trading";
-import { get } from "http";
 
 /**
  * POST /orders
@@ -28,7 +27,7 @@ export async function placeOrderHandler(req: Request, res: Response) {
   try {
     const { side, baseAsset, quoteAsset, requestedSize, priceAtOrderTime } =
       req.body;
-    const userId = (req as any).user.id; // Assume user ID is set in req.user by auth middleware
+    const userId = (req as any).userId; // Assume user ID is set in req.user by auth middleware
 
     const size = new Decimal(requestedSize);
     const price = new Decimal(priceAtOrderTime);
@@ -96,9 +95,8 @@ export async function getUserOrdersHandler(
   res: Response
 ): Promise<void> {
   try {
-    const userId = (req as any).user.id; // Assume user ID is set in req.user by auth middleware
+    const userId = (req as any).userId; // Assume user ID is set in req.user by auth middleware
     const orders = await getUserOrders(userId);
-
     if (!orders) {
       res
         .status(404)
