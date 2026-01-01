@@ -23,7 +23,7 @@ export async function getNonce(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const nonce = generateNonce(walletAddress);
+    const nonce = await generateNonce(walletAddress);
     res.status(200).json({
       nonce,
       expiresIn: 600, // 10 minutes

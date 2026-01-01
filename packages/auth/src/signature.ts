@@ -1,4 +1,4 @@
-import * as ed from '@noble/ed25519';
+import nacl from 'tweetnacl';
 import bs58 from 'bs58';
 
 /**
@@ -18,14 +18,13 @@ export async function verifySignature(
   try {
     // Decode base58 inputs to raw bytes
     const signatureBytes = bs58.decode(signature);
-    const addressBytes = bs58.decode(walletAddress);
+    const publicKeyBytes = bs58.decode(walletAddress);
 
     // Encode message to UTF-8 bytes
     const messageBytes = new TextEncoder().encode(message);
 
-    // Verify signature: ed25519.verify(signature, message, publicKey)
-    // Note: ed.verify() is synchronous, returns boolean directly
-    const isValid = ed.verify(signatureBytes, messageBytes, addressBytes);
+    // Verify signature using tweetnacl (same library used for signing)
+    const isValid = nacl.sign.detached.verify(messageBytes, signatureBytes, publicKeyBytes);
 
     return isValid;
   } catch (error) {

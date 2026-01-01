@@ -19,7 +19,7 @@ export async function generateNonce(walletAddress:string) {
             EX: 10 * 60 // Expires in 10 minutes
         });
 
-        return nonce;
+        return nonce.toString();
     }catch(error){
         console.error("Failed to generate nonce: ", error);
         throw new Error(`Auth: Could not generate nonce for wallet ${walletAddress}`);
