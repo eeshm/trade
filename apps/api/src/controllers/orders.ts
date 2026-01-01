@@ -5,29 +5,37 @@ import { getPrice } from "@repo/pricing";
 
 /**
  * POST /orders
- * Place a market order (buy or sell)
+ * Place and execute a market order immediately
  *
  * Request body:
  * {
  *   side: 'buy' | 'sell',
  *   baseAsset: 'SOL',
  *   quoteAsset: 'USD',
- *   requestedSize: '10',        // Decimal string
- *   priceAtOrderTime: '230'     // Decimal string
+ *   requestedSize: '10'        // Decimal string
  * }
  *
- * Response:
+ * Response (on success):
  * {
  *   success: true,
  *   orderId: 123,
- *   feesApplied: '0.23'
+ *   executedSize: '10',
+ *   executedPrice: '230.50',
+ *   feesApplied: '0.2305',
+ *   status: 'filled'
+ * }
+ *
+ * Response (on failure):
+ * {
+ *   success: false,
+ *   error: "Error message",
+ *   code?: "PRICE_UNAVAILABLE" | "INSUFFICIENT_BALANCE" | ...
  * }
  */
-
 export async function placeOrderHandler(req: Request, res: Response) {
   try {
     const { side, baseAsset, quoteAsset, requestedSize } = req.body;
-    const userId = (req as any).userId; // Assume user ID is set in req.user by auth middleware
+    const userId = (req as any).userId; // Set by auth middleware
     
     // Validate required fields
     if (!side || !baseAsset || !quoteAsset || !requestedSize) {
@@ -38,22 +46,28 @@ export async function placeOrderHandler(req: Request, res: Response) {
       return;
     }
 
-
     const size = new Decimal(requestedSize);
+
+    // Fetch current price from Redis (server-side only, never from client)
     const price = await getPrice(baseAsset);
 
+    // Place and execute market order immediately
     const result = await placeOrder(
       userId,
       side,
       baseAsset,
       quoteAsset,
       size,
-      price
+      price  // Execution price (market price at this moment)
     );
-    res.status(200).json({
+
+    res.status(201).json({
       success: true,
       orderId: result.orderId,
-      feesApplied: result.feeApplied.toString(),
+      executedSize: result.executedSize,
+      executedPrice: result.executedPrice,
+      feesApplied: result.feesApplied,
+      status: result.status,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -64,6 +78,16 @@ export async function placeOrderHandler(req: Request, res: Response) {
         success: false,
         error: message,
         code: "PRICE_UNAVAILABLE",
+      });
+      return;
+    }
+
+    // Insufficient balance
+    if (message.includes("Insufficient")) {
+      res.status(400).json({
+        success: false,
+        error: message,
+        code: "INSUFFICIENT_BALANCE",
       });
       return;
     }

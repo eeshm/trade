@@ -6,6 +6,7 @@ import { isRedisHealthy, initRedis } from "@repo/redis";
 import authRouter from "./routes/auth.ts";
 import orderRouter from "./routes/orders.ts";
 import portfolioRouter from "./routes/portfolio.ts";
+import marketRouter from "./routes/market.ts";
 import { seedDevelopmentPrices } from "@repo/pricing";
 
 export function createApp(): Express {
@@ -52,6 +53,7 @@ export function createApp(): Express {
   app.use("/auth", authRouter);
   app.use("/orders", orderRouter);
   app.use("/portfolio", portfolioRouter);
+  app.use("/market", marketRouter);
 
   // 3. Centralized error handler (must be last)
   app.use(errorHandler);

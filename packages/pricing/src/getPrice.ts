@@ -59,7 +59,7 @@ export async function getPrice(symbol:string) : Promise<Decimal> {
  * Get price with metadata (for debugging/display)
  * 
  * @param symbol Token symbol
- * @returns Price, timestamp, and age
+ * @returns Price, timestamp, and age; null if unavailable or stale
  */
 
 export async function getPriceWithMetadata(symbol:string) {
@@ -73,11 +73,16 @@ export async function getPriceWithMetadata(symbol:string) {
     ]);
 
     if(!priceStr){
-        throw new Error(`Price not avaliable for ${upperSymbol}`);
+        return null;
     }
 
     const timestamp = timestampStr ? new Date(timestampStr) : new Date();
     const ageMs = Date.now() - timestamp.getTime();
+
+    // Check staleness
+    if(ageMs > PRICE_STALE_THRESHOLD_MS){
+        return null;
+    }
 
     return{
         price : new Decimal(priceStr),
