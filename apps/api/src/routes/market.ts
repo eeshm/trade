@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getPriceHandler, getAllPricesHandler, getMarketStatusHandler } from "../controllers/market.js";
+import { getPriceHandler, getAllPricesHandler, getMarketStatusHandler } from "../controllers/market.ts";
 
 const router: Router = Router();
 
@@ -15,7 +15,7 @@ const router: Router = Router();
 router.get("/price/:symbol", getPriceHandler);
 
 // GET /market/prices - All prices
-router.get("/prices", getAllPricesHandler);
+router.get("/prices", getAllPricesHandler); 
 
 // GET /market/status - Market health status
 router.get("/status", getMarketStatusHandler);

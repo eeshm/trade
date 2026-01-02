@@ -59,6 +59,7 @@ export async function fetchSolPriceFromPyth(): Promise<Decimal> {
     // Build URL with price feed ID as query param
     const url = new URL(endpoint, hermesUrl);
     url.searchParams.append("ids[]", SOL_USD_PRICE_FEED_ID);
+    console.log(`Fetching SOL price from Pyth Hermes API: ${url.toString()}`);
 
     const response = await fetch(url.toString(), {
       method: "GET",
