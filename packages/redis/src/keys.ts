@@ -53,6 +53,19 @@ const NONCE = {
   walletNonce: (walletAddress: string, nonce: string) => `${APP}:nonce:${walletAddress}:${nonce}`,
 };
 
+// Pub/Sub Channels (for real-time events)
+const CHANNELS = {
+  // Price updates (published by price-ingestion worker)
+  priceUpdate: () => `${APP}:events:price:update`,
+  
+  // Order events (published by API after order execution)
+  orderFilled: () => `${APP}:events:order:filled`,
+  orderRejected: () => `${APP}:events:order:rejected`,
+  
+  // Portfolio updates (published after balance/position changes)
+  portfolioUpdate: () => `${APP}:events:portfolio:update`,
+};
+
 export const redisKeys = {
   PRICE,
   WEBSOCKET,
@@ -61,6 +74,7 @@ export const redisKeys = {
   CACHE,
   SESSION,
   NONCE,
+  CHANNELS,
 };
 
 /**
