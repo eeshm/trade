@@ -96,8 +96,8 @@ export function validatePrice(price: Decimal): void {
     throw new Error(`Invalid price: ${price.toString()} must be > 0`);
   }
 
-  // Sanity check: SOL should never be $10k
-  if (price.gt(10000)) {
+  // Sanity check: SOL should never be $1000
+  if (price.gt(1000)) {
     throw new Error(
       `Suspicious price: ${price.toString()} seems too high for SOL/USD`
     );
