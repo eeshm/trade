@@ -2,6 +2,7 @@ import { initRedis, isRedisHealthy } from "@repo/redis";
 import { fetchSolPriceFromPyth, validatePrice } from "./pyth.js";
 import { updateSolPrice } from "./update.js";
 
+
 const PRICE_UPDATE_INTERVAL_MS = 10 * 1000; // 10 seconds
 
 /**
@@ -71,7 +72,6 @@ async function main() {
     setTimeout(loop, PRICE_UPDATE_INTERVAL_MS);
   };
     loop();
-
     process.on("SIGINT", () => {
       console.log("[WORKER] Caught SIGINT, shutting down gracefully...");
       process.exit(0);

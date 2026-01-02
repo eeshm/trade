@@ -47,3 +47,13 @@ Truth before trading logic
 - Postgres is the source of truth
 - Redis is never authoritative
 If a schema violates these → it’s wrong.
+
+
+
+// After Pyth netwrok setup 
+
+- [ ] Add support for more tokens (ETH, BTC)
+- [ ] Implement Postgres fallback for price history
+- [ ] Add WebSocket real-time price streaming
+- [ ] Set up monitoring/alerting for worker health
+- [ ] Cache price feed IDs in Redis for faster startup
