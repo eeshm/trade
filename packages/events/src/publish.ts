@@ -17,33 +17,56 @@ import type {
  * Publish an event to a Redis channel
  */
 export async function publish<T>(channel: string, payload: T): Promise<void> {
-  await redis.publish(channel, JSON.stringify(payload));
+  const message = JSON.stringify(payload);
+  await redis.publish(channel, message);
 }
 
 /**
  * Publish price update event
+ * Called by price-ingestion worker after updating Redis cache
  */
-export async function publishPriceUpdate(event: PriceUpdateEvent): Promise<void> {
+export async function publishPriceUpdate(symbol:string, price: string): Promise<void> {
+  const event : PriceUpdateEvent={
+    symbol,
+    price,
+    timestamp: new Date().toISOString(),
+  };
   await publish(redisKeys.CHANNELS.priceUpdate(), event);
 }
 
 /**
  * Publish order filled event
+ * Called by API after successful order execution
  */
-export async function publishOrderFilled(event: OrderFilledEvent): Promise<void> {
+export async function publishOrderFilled(data: Omit<OrderFilledEvent, "timestamp">): Promise<void> {
+  const event: OrderFilledEvent = {
+    ...data,
+    timestamp: new Date().toISOString(),
+  };
   await publish(redisKeys.CHANNELS.orderFilled(), event);
 }
-
 /**
  * Publish order rejected event
+ * Called by API when order is rejected
  */
-export async function publishOrderRejected(event: OrderRejectedEvent): Promise<void> {
+export async function publishOrderRejected(data: Omit<OrderRejectedEvent, "timestamp">): Promise<void> {
+  const event: OrderRejectedEvent = {
+    ...data,
+    timestamp: new Date().toISOString(),
+  };
   await publish(redisKeys.CHANNELS.orderRejected(), event);
 }
 
 /**
  * Publish portfolio update event
+ * Called by API after balance/position changes
  */
-export async function publishPortfolioUpdate(event: PortfolioUpdateEvent): Promise<void> {
+export async function publishPortfolioUpdate(
+  data: Omit<PortfolioUpdateEvent, "timestamp">
+): Promise<void> {
+  const event: PortfolioUpdateEvent = {
+    ...data,
+    timestamp: new Date().toISOString(),
+  };
   await publish(redisKeys.CHANNELS.portfolioUpdate(), event);
 }

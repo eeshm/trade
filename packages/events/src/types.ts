@@ -7,7 +7,7 @@
 export interface PriceUpdateEvent {
   symbol: string;
   price: string; // Decimal string
-  timestamp: number; // Unix timestamp in milliseconds
+  timestamp: string; // Unix timestamp in milliseconds
 }
 
 export interface OrderFilledEvent {
@@ -19,14 +19,14 @@ export interface OrderFilledEvent {
   executedPrice: string; // Decimal string
   executedSize: string; // Decimal string
   fees: string; // Decimal string
-  timestamp: number; // Unix timestamp in milliseconds
+  timestamp: string;
 }
 
 export interface OrderRejectedEvent {
   userId: number;
   orderId: number;
   reason: string;
-  timestamp: number; // Unix timestamp in milliseconds
+  timestamp:string;
 }
 
 export interface PortfolioUpdateEvent {
