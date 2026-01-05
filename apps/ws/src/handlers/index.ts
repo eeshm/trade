@@ -2,6 +2,6 @@
  * Export all handlers
  */
 
-export * from "./auth.ts";
-export * from "./connection.ts";
-export * from "./subscribe.ts";
+export { handleConnection } from "./connection.js";
+export { handleAuth, sendMessage, isAuthenticated } from "./auth.js";
+export { handleSubscribe, handleUnsubscribe } from "./subscribe.js";
