@@ -72,3 +72,21 @@ export function createRateLimiter(config:RateLimitConfig){
         }
     }
 }
+
+/**
+ * Extract IP address from request
+ */
+function getClientIp(req:Request):string{
+    const forwarded =  req.headers['x-forwarded-for'];
+    if(typeof forwarded === 'string'){
+        return forwarded.split(",")[0]?.trim()!;
+    }
+    return req.socket.remoteAddress || "unknown";
+}
+
+/**
+ * Extract user ID from authenticated request
+ */
+function getUserId(req:Request):string{ 
+    return (req as any).userId.toString();
+}
