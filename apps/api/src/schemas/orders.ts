@@ -8,7 +8,7 @@ import {
   assetSchema,
   orderSideSchema,
   positiveIntSchema,
-} from "./common.js";
+} from "./common.ts";
 
 /**
  * POST /orders body
@@ -33,7 +33,7 @@ export const placeOrderSchema = z
 /**
  * GET /orders/:orderId params
  */
-export const getOrderSchema = z.object({
+export const getOrderParamsSchema = z.object({
   orderId: positiveIntSchema,
 });
 
@@ -58,5 +58,5 @@ export const listOrdersQuerySchema = z.object({
 });
 
 export type PlaceOrderInput = z.infer<typeof placeOrderSchema>;
-export type GetOrderParams =z.infer<typeof getOrderSchema>;
+export type GetOrderParams =z.infer<typeof getOrderParamsSchema>;
 export type ListOrdersQuery = z.infer<typeof listOrdersQuerySchema>;

@@ -29,7 +29,7 @@ export {
   type PlaceOrderInput,
   type GetOrderParams,
   type ListOrdersQuery,
-} from "./orders.js";
+} from "./orders.ts";
 
 // Market
 export {
