@@ -41,8 +41,8 @@ async function main() {
   })
 
   process.on("SIGTERM",()=>{
-    console.log("[WS] Fatal error: ",error);
-    process.exit(1);
+    console.log("[WS] Shutdown signal received");
+    process.exit(0);
   })
 }
 

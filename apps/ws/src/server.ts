@@ -47,17 +47,18 @@ export function createWebSocketServer(port: number): WebSocketServer {
     wss.clients.forEach((client) => {
       const ws = client as AuthenticatedWebSocket;
       if (!ws.isAlive) {
-        console.log("[WS] Terminating dead connections");
+        console.log("[WS] Terminating dead connection");
         return ws.terminate();
       }
       ws.isAlive = false;
       ws.ping();
-    }, HEARTBEAT_INTERVAL);
-
-    wss.on("close", () => {
-      clearInterval(heartbeat);
     });
+  }, HEARTBEAT_INTERVAL);
+
+  wss.on("close", () => {
+    clearInterval(heartbeat);
   });
+
   return wss;
 }
 

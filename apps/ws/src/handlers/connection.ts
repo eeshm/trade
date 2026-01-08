@@ -20,9 +20,13 @@ export function handleConnection(ws: AuthenticatedWebSocket): void {
   // Handle incoming messages
   ws.on("message", async (data) => {
     try {
-      const message: ClientMessage = JSON.parse(data.toString());
+      const dataStr = data.toString();
+      console.log("[WS] Received message:", dataStr);
+      const message: ClientMessage = JSON.parse(dataStr);
+      console.log("[WS] Parsed message type:", message.type);
       await handleMessage(ws, message);
     } catch (error) {
+      console.error("[WS] Error processing message:", error);
       sendMessage(ws, { type: "error", message: "Invalid message format" });
     }
   });
