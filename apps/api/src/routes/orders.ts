@@ -18,8 +18,6 @@ import {
   listOrdersQuerySchema,
 } from "../schemas/index.ts";
 
-import { fr } from "zod/locales";
-
 const router: Router = Router();
 router.use(authMiddleware);
 
@@ -40,7 +38,7 @@ router.post(
  * Get single order by ID (protected)
  */
 
-router.post(
+router.get(
   "/:orderId",
   readRateLimiter,
   validateParams(getOrderParamsSchema),

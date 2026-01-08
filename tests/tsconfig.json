@@ -1,0 +1,17 @@
+{
+  "extends": "../packages/typescript-config/base.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "types": ["vitest/globals"],
+    "paths": {
+      "@repo/*": ["../packages/*/src/index.ts"]
+    }
+  },
+  "include": [
+    "./**/*.ts",
+    "../apps/**/*.ts",
+    "../packages/**/*.ts",
+    "../workers/**/*.ts"
+  ]
+}

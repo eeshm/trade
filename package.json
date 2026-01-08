@@ -11,16 +11,28 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
+    "test": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:e2e": "vitest run tests/e2e",
+    "test:setup": "bun run scripts/setup-test-db.ts",
     "check-circular": "node scripts/check-circular-deps.mjs",
     "visualize-deps": "node scripts/visualize-deps.mjs",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy"
   },
   "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/supertest": "^6.0.3",
+    "@vitest/coverage-v8": "^1.6.0",
+    "bs58": "^6.0.0",
+    "dotenv": "^17.2.3",
     "dotenv-cli": "^11.0.0",
     "prettier": "^3.7.4",
+    "tweetnacl": "^1.0.3",
+    "supertest": "^7.0.0",
     "turbo": "^2.7.0",
-    "typescript": "5.9.2"
+    "typescript": "5.9.2",
+    "vitest": "^1.6.0"
   },
   "engines": {
     "node": ">=18"
@@ -34,6 +46,7 @@
   "dependencies": {
     "@prisma/client": "^6",
     "decimal.js": "^10.6.0",
+    "express": "^5.2.1",
     "prisma": "^6"
   }
 }

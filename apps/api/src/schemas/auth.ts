@@ -21,14 +21,10 @@ export const loginSchema = z.object({
     .string()
     .min(64, "Signature too short")
     .max(200, "Signature too long"),
-  message: z
+  nonce: z
     .string()
-    .min(1, "Message required")
-    .max(500, "Message too long")
-    .refine(
-      (val) => val.startsWith("Sign this nonce:"),
-      "Invalid message format"
-    ),
+    .min(1, "Nonce required")
+    .max(200, "Nonce too long"),
 });
 
 export type GetNonceInput = z.infer<typeof getNonceSchema>;
