@@ -19,7 +19,7 @@ export const getApiClient = async (): Promise<SuperTest<Test>> => {
     throw new Error("Failed to initialize test application");
   }
 
-  return request(app);
+  return request(app) as unknown as SuperTest<Test>;
 };
 
 export const shutdownApiClient = async (): Promise<void> => {

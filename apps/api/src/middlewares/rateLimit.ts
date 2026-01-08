@@ -49,10 +49,10 @@ export function createRateLimiter(config:RateLimitConfig){
             multi.expire(redisKey,Math.ceil(windowMs/1000)+1);
 
             const results = await multi.exec();
-            const requestCount =  results[1] as number;
+            const requestCount = Number(results?.[1] ?? 0);
 
             res.setHeader("x-RateLimit-Limit", maxRequests);
-            res.setHeader("x-RateLimit-Remaining", Math.max(0, maxRequests - requestCount - 1));
+            res.setHeader("x-RateLimit-Reswmaining", Math.max(0, maxRequests - requestCount - 1));
             res.setHeader("x-RateLimit-Reset", Math.ceil((now+ windowMs)/1000));
 
             if(requestCount > maxRequests){

@@ -15,7 +15,7 @@ export async function handleAuth(
   try {
     const session = await validateSession(token);
 
-    if (!session) {
+    if (!session.valid || !session.userId) {
       sendMessage(ws, {
         type: "auth",
         success: false,
@@ -25,7 +25,7 @@ export async function handleAuth(
     }
 
     // Attach user info to socket
-    ws.userId = session.userId!;
+    ws.userId = session.userId;
 
     //TODO: attach wallet address
     // ws.walletAddress = session.walletAddress!;
