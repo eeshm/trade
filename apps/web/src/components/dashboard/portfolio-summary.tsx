@@ -1,9 +1,8 @@
-'use client';
-
 import { Balance, Position } from '@/types';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { useTradingStore } from '@/store/trading';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface PortfolioSummaryProps {
   balances: Balance[];
@@ -15,7 +14,7 @@ export function PortfolioSummary({
   positions,
 }: PortfolioSummaryProps) {
   const { prices } = useTradingStore();
-  
+
   const usdcBalance = balances.find((b) => b.asset === 'USDC');
   const solBalance = balances.find((b) => b.asset === 'SOL');
   const solPosition = positions.find((p) => p.asset === 'SOL');
@@ -31,7 +30,7 @@ export function PortfolioSummary({
   // Calculate unrealized P&L
   const entryValue = solPosition
     ? parseFloat(solPosition.size) *
-      parseFloat(solPosition.avgEntryPrice)
+    parseFloat(solPosition.avgEntryPrice)
     : 0;
   const unrealizedPnL = solValue - entryValue;
   const unrealizedPnLPercent =
@@ -40,66 +39,74 @@ export function PortfolioSummary({
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {/* Total Portfolio Value */}
-      <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-        <p className="text-sm text-slate-400 mb-2">Portfolio Value</p>
-        <p className="text-3xl font-bold text-white">
-          {formatCurrency(totalValue)}
-        </p>
-        <p className="text-xs text-slate-500 mt-2">Initial: $1,000,000</p>
-      </div>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Portfolio Value</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{formatCurrency(totalValue)}</div>
+          <p className="text-xs text-muted-foreground mt-1">Initial: $1,000,000</p>
+        </CardContent>
+      </Card>
 
       {/* USDC Balance */}
-      <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-        <p className="text-sm text-slate-400 mb-2">USDC Available</p>
-        <p className="text-2xl font-bold text-white">
-          {formatCurrency(usdcBalance?.available || '0')}
-        </p>
-        {usdcBalance?.locked && parseFloat(usdcBalance.locked) > 0 && (
-          <p className="text-xs text-slate-500 mt-2">
-            Locked: {formatCurrency(usdcBalance.locked)}
-          </p>
-        )}
-      </div>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">USDC Available</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{formatCurrency(usdcBalance?.available || '0')}</div>
+          {usdcBalance?.locked && parseFloat(usdcBalance.locked) > 0 && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Locked: {formatCurrency(usdcBalance.locked)}
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* SOL Position */}
-      <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-        <p className="text-sm text-slate-400 mb-2">SOL Holding</p>
-        <p className="text-2xl font-bold text-white">
-          {formatNumber(solBalance?.available || '0', 4)} SOL
-        </p>
-        {solPosition && parseFloat(solPosition.size) > 0 && (
-          <p className="text-xs text-slate-500 mt-2">
-            Avg Entry: ${formatNumber(solPosition.avgEntryPrice, 2)}
-          </p>
-        )}
-      </div>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">SOL Holding</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-2xl font-bold">{formatNumber(solBalance?.available || '0', 4)} SOL</div>
+          {solPosition && parseFloat(solPosition.size) > 0 && (
+            <p className="text-xs text-muted-foreground mt-1">
+              Avg Entry: ${formatNumber(solPosition.avgEntryPrice, 2)}
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Unrealized P&L */}
-      <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-        <p className="text-sm text-slate-400 mb-2">Unrealized P&L</p>
-        <div className="flex items-center gap-2">
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardTitle className="text-sm font-medium">Unrealized P&L</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2">
+            <div
+              className={`text-2xl font-bold ${unrealizedPnL >= 0 ? 'text-green-500' : 'text-red-500'
+                }`}
+            >
+              {unrealizedPnL >= 0 ? '+' : ''}{formatCurrency(unrealizedPnL)}
+            </div>
+            {unrealizedPnL >= 0 ? (
+              <TrendingUp className="w-4 h-4 text-green-500" />
+            ) : (
+              <TrendingDown className="w-4 h-4 text-red-500" />
+            )}
+          </div>
           <p
-            className={`text-2xl font-bold ${
-              unrealizedPnL >= 0 ? 'text-green-400' : 'text-red-400'
-            }`}
+            className={`text-xs mt-1 ${unrealizedPnLPercent >= 0 ? 'text-green-500' : 'text-red-500'
+              }`}
           >
-            {unrealizedPnL >= 0 ? '+' : ''}{formatCurrency(unrealizedPnL)}
+            {unrealizedPnLPercent >= 0 ? '+' : ''}
+            {unrealizedPnLPercent.toFixed(2)}%
           </p>
-          {unrealizedPnL >= 0 ? (
-            <TrendingUp className="w-5 h-5 text-green-400" />
-          ) : (
-            <TrendingDown className="w-5 h-5 text-red-400" />
-          )}
-        </div>
-        <p
-          className={`text-xs mt-2 ${
-            unrealizedPnLPercent >= 0 ? 'text-green-500' : 'text-red-500'
-          }`}
-        >
-          {unrealizedPnLPercent >= 0 ? '+' : ''}
-          {unrealizedPnLPercent.toFixed(2)}%
-        </p>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

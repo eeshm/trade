@@ -14,7 +14,7 @@ export function WalletConnect() {
   if (!connected) {
     return (
       <div className="flex items-center gap-2">
-        <WalletMultiButton />
+        <WalletMultiButton style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }} />
       </div>
     );
   }
@@ -41,7 +41,7 @@ export function WalletConnect() {
 
   return (
     <div>
-      <WalletMultiButton />
+      <WalletMultiButton style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }} />
     </div>
   );
 }

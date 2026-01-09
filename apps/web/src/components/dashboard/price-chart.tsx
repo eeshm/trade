@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface PriceChartProps {
   prices: { [symbol: string]: PriceData };
@@ -35,43 +36,57 @@ export function PriceChart({ prices }: PriceChartProps) {
   }, [solPrice]);
 
   return (
-    <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-white mb-2">SOL/USD</h2>
-        <p className="text-3xl font-bold text-white">
-          ${parseFloat(solPrice).toFixed(2)}
-        </p>
-        <p className="text-sm text-slate-400 mt-2">Real-time price via Pyth</p>
-      </div>
-
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-          <XAxis
-            dataKey="time"
-            stroke="#94a3b8"
-            style={{ fontSize: '12px' }}
-          />
-          <YAxis stroke="#94a3b8" style={{ fontSize: '12px' }} />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: '#1e293b',
-              border: '1px solid #475569',
-              borderRadius: '6px',
-            }}
-            labelStyle={{ color: '#f1f5f9' }}
-            formatter={(value: any) => [`$${value.toFixed(2)}`, 'Price']}
-          />
-          <Line
-            type="monotone"
-            dataKey="price"
-            stroke="#8b5cf6"
-            dot={false}
-            strokeWidth={2}
-            isAnimationActive={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>SOL/USD</CardTitle>
+        <div className="flex flex-col">
+          <span className="text-3xl font-bold">
+            ${parseFloat(solPrice).toFixed(2)}
+          </span>
+          <span className="text-sm text-muted-foreground">Real-time price via Pyth</span>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="h-[300px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis
+                dataKey="time"
+                stroke="hsl(var(--muted-foreground))"
+                style={{ fontSize: '12px' }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke="hsl(var(--muted-foreground))"
+                style={{ fontSize: '12px' }}
+                tickLine={false}
+                axisLine={false}
+                domain={['auto', 'auto']}
+              />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: 'hsl(var(--popover))',
+                  border: '1px solid hsl(var(--border))',
+                  borderRadius: '6px',
+                  color: 'hsl(var(--popover-foreground))',
+                }}
+                labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
+                formatter={(value: any) => [`$${value.toFixed(2)}`, 'Price']}
+              />
+              <Line
+                type="monotone"
+                dataKey="price"
+                stroke="hsl(var(--primary))"
+                dot={false}
+                strokeWidth={2}
+                isAnimationActive={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

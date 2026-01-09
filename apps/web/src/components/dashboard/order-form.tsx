@@ -5,6 +5,8 @@ import { OrderSide } from '@/types';
 import { apiClient } from '@/lib/api-client';
 import { useTradingStore } from '@/store/trading';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -56,103 +58,102 @@ export function OrderForm() {
   const estimatedCost = (parseFloat(size) || 0) * solPrice;
 
   return (
-    <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-      <h2 className="text-xl font-bold text-white mb-6">Place Order</h2>
+    <Card>
+      <CardHeader>
+        <CardTitle>Place Order</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Side Selection */}
+          <div className="flex gap-4">
+            <Button
+              type="button"
+              variant={side === 'buy' ? 'default' : 'outline'}
+              onClick={() => setSide('buy')}
+              className={`flex-1 ${side === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : ''}`}
+            >
+              Buy SOL
+            </Button>
+            <Button
+              type="button"
+              variant={side === 'sell' ? 'default' : 'outline'}
+              onClick={() => setSide('sell')}
+              className={`flex-1 ${side === 'sell' ? 'bg-red-600 hover:bg-red-700 text-white' : ''}`}
+            >
+              Sell SOL
+            </Button>
+          </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Side Selection */}
-        <div className="flex gap-4">
-          <button
-            type="button"
-            onClick={() => setSide('buy')}
-            className={`flex-1 py-3 rounded-lg font-medium transition-colors ${side === 'buy'
-              ? 'bg-green-600 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-              }`}
-          >
-            Buy SOL
-          </button>
-          <button
-            type="button"
-            onClick={() => setSide('sell')}
-            className={`flex-1 py-3 rounded-lg font-medium transition-colors ${side === 'sell'
-              ? 'bg-red-600 text-white'
-              : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-              }`}
-          >
-            Sell SOL
-          </button>
-        </div>
+          {/* Size Input */}
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-muted-foreground">
+              Size (SOL)
+            </label>
+            <Input
+              type="number"
+              step="0.01"
+              min="0.01"
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+              placeholder="Enter SOL amount"
+            />
+            <p className="text-xs text-muted-foreground">
+              Estimated cost: ${estimatedCost.toFixed(2)} USDC
+            </p>
+          </div>
 
-        {/* Size Input */}
-        <div>
-          <label className="block text-sm font-medium text-slate-300 mb-2">
-            Size (SOL)
-          </label>
-          <input
-            type="number"
-            step="0.01"
-            min="0.01"
-            value={size}
-            onChange={(e) => setSize(e.target.value)}
-            placeholder="Enter SOL amount"
-            className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:border-purple-500"
-          />
-          <p className="text-xs text-slate-400 mt-2">
-            Estimated cost: ${estimatedCost.toFixed(2)} USDC
-          </p>
-        </div>
+          {/* Order Details */}
+          <div className="bg-muted rounded p-4 text-sm space-y-2">
+            <div className="flex justify-between text-muted-foreground">
+              <span>Price per SOL:</span>
+              <span className="text-foreground">${solPrice.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between text-muted-foreground">
+              <span>Order Type:</span>
+              <span className="text-foreground">Market</span>
+            </div>
+            <div className="flex justify-between text-muted-foreground">
+              <span>Fee (0.1%):</span>
+              <span className="text-foreground">
+                ${(estimatedCost * 0.001).toFixed(2)}
+              </span>
+            </div>
+          </div>
 
-        {/* Order Details */}
-        <div className="bg-slate-700 rounded p-4 text-sm space-y-2">
-          <div className="flex justify-between text-slate-300">
-            <span>Price per SOL:</span>
-            <span className="text-white">${solPrice.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-slate-300">
-            <span>Order Type:</span>
-            <span className="text-white">Market</span>
-          </div>
-          <div className="flex justify-between text-slate-300">
-            <span>Fee (0.1%):</span>
-            <span className="text-white">
-              ${(estimatedCost * 0.001).toFixed(2)}
-            </span>
-          </div>
-        </div>
-        {/* Submit Button */}
-        {!connected ? (
-          <div className="w-full flex justify-center">
-            <WalletMultiButton className="w-full bg-purple-600! hover:bg-purple-700! h-12! rounded-lg! text-base! font-medium!" />
-          </div>
-        ) : !isAuthenticated ? (
-          <Button
-            type="button"
-            onClick={() => login()}
-            className="w-full h-12 text-base font-medium bg-purple-600 hover:bg-purple-700"
-          >
-            Sign In to Trade
-          </Button>
-        ) : (
-          <Button
-            type="submit"
-            disabled={isLoading || !size}
-            className={`w-full h-12 text-base font-medium ${side === 'buy'
-                ? 'bg-green-600 hover:bg-green-700'
-                : 'bg-red-600 hover:bg-red-700'
-              }`}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Placing Order...
-              </>
-            ) : (
-              `${side === 'buy' ? 'Buy' : 'Sell'} SOL`
-            )}
-          </Button>
-        )}
-      </form>
-    </div >
+          {/* Submit Button */}
+          {!connected ? (
+            <div className="w-full flex justify-center">
+              <WalletMultiButton className="w-full bg-primary! hover:bg-primary/90! h-10! rounded-md! text-sm! font-medium!" />
+            </div>
+          ) : !isAuthenticated ? (
+            <Button
+              type="button"
+              onClick={() => login()}
+              className="w-full"
+            >
+              Sign In to Trade
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              disabled={isLoading || !size}
+              className={`w-full ${side === 'buy'
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-600 hover:bg-red-700'
+                }`}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Placing Order...
+                </>
+              ) : (
+                `${side === 'buy' ? 'Buy' : 'Sell'} SOL`
+              )}
+            </Button>
+          )}
+        </form>
+      </CardContent>
+    </Card>
   );
 }
