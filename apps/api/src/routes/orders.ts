@@ -18,9 +18,10 @@ import {
   listOrdersQuerySchema,
 } from "../schemas/index.ts";
 
-const router: Router = Router();
-router.use(authMiddleware);
+const router: Router = Router()
 
+;
+router.use(authMiddleware);
 /**
  * POST /orders
  * Place a new order (protected - requires auth)

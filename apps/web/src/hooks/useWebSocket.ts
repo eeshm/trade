@@ -175,6 +175,7 @@ export function useWebSocket({ token, enabled = true }: UseWebSocketProps) {
     [send]
   );
 
+  // Recieve "pong" responses
   const ping = useCallback(() => {
     send({ type: 'ping' });
   }, [send]);

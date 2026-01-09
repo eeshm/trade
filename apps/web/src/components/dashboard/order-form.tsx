@@ -47,7 +47,7 @@ export function OrderForm() {
     }
   };
 
-  const solPrice = parseFloat(prices.SOL?.price || '150');
+  const solPrice = parseFloat(prices.SOL?.price);
   const estimatedCost = (parseFloat(size) || 0) * solPrice;
 
   return (
