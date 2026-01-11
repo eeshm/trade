@@ -11,7 +11,8 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DashboardWrapper } from '@/components/dashboard-wrapper';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface PriceChartProps {
   prices: { [symbol: string]: PriceData };
@@ -36,57 +37,56 @@ export function PriceChart({ prices }: PriceChartProps) {
   }, [solPrice]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>SOL/USD</CardTitle>
-        <div className="flex flex-col">
-          <span className="text-2xl font-semibold tracking-tight text-foreground">
-            ${parseFloat(solPrice).toFixed(2)}
-          </span>
-          <span className="text-sm text-muted-foreground">Real-time price via Pyth</span>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-[300px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis
-                dataKey="time"
-                stroke="hsl(var(--muted-foreground))"
-                style={{ fontSize: '12px' }}
-                tickLine={false}
-                axisLine={false}
-              />
-              <YAxis
-                stroke="hsl(var(--muted-foreground))"
-                style={{ fontSize: '12px' }}
-                tickLine={false}
-                axisLine={false}
-                domain={['auto', 'auto']}
-              />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--popover))',
-                  border: '1px solid hsl(var(--border))',
-                  borderRadius: '6px',
-                  color: 'hsl(var(--popover-foreground))',
-                }}
-                labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
-                formatter={(value: any) => [`$${value.toFixed(2)}`, 'Price']}
-              />
-              <Line
-                type="monotone"
-                dataKey="price"
-                stroke="hsl(var(--primary))"
-                dot={false}
-                strokeWidth={2}
-                isAnimationActive={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
+    <DashboardWrapper name="SOL/USD Price Chart">
+      <Card>
+        <CardContent>
+          <div className="flex flex-col mb-4">
+            <span className="text-2xl font-semibold tracking-tight text-foreground">
+              ${parseFloat(solPrice).toFixed(2)}
+            </span>
+            <span className="text-sm text-muted-foreground">Real-time price via Pyth</span>
+          </div>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                <XAxis
+                  dataKey="time"
+                  stroke="hsl(var(--muted-foreground))"
+                  style={{ fontSize: '12px' }}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="hsl(var(--muted-foreground))"
+                  style={{ fontSize: '12px' }}
+                  tickLine={false}
+                  axisLine={false}
+                  domain={['auto', 'auto']}
+                />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--popover))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '6px',
+                    color: 'hsl(var(--popover-foreground))',
+                  }}
+                  labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
+                  formatter={(value: any) => [`$${value.toFixed(2)}`, 'Price']}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="price"
+                  stroke="hsl(var(--primary))"
+                  dot={false}
+                  strokeWidth={2}
+                  isAnimationActive={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+    </DashboardWrapper>
   );
 }

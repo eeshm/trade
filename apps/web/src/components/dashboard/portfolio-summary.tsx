@@ -2,7 +2,8 @@ import { Balance, Position } from '@/types';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { useTradingStore } from '@/store/trading';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DashboardWrapper } from '@/components/dashboard-wrapper';
+import { Card, CardContent } from '@/components/ui/card';
 
 interface PortfolioSummaryProps {
   balances: Balance[];
@@ -39,74 +40,70 @@ export function PortfolioSummary({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
       {/* Total Portfolio Value */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <CardTitle className="text-sm font-medium">Portfolio Value</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-semibold tracking-tight text-foreground">{formatCurrency(totalValue)}</div>
-          <p className="text-xs text-muted-foreground mt-1">Initial: $1,000,000</p>
-        </CardContent>
-      </Card>
+      <DashboardWrapper name="Portfolio Value">
+        <Card>
+          <CardContent>
+            <div className="text-2xl font-semibold tracking-tight text-foreground">{formatCurrency(totalValue)}</div>
+            <p className="text-xs text-muted-foreground mt-1">Initial: $1,000,000</p>
+          </CardContent>
+        </Card>
+      </DashboardWrapper>
 
       {/* USDC Balance */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <CardTitle className="text-sm font-medium">USDC Available</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-semibold tracking-tight text-foreground">{formatCurrency(usdcBalance?.available || '0')}</div>
-          {usdcBalance?.locked && parseFloat(usdcBalance.locked) > 0 && (
-            <p className="text-xs text-muted-foreground mt-1">
-              Locked: {formatCurrency(usdcBalance.locked)}
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      <DashboardWrapper name="USDC Available">
+        <Card>
+          <CardContent>
+            <div className="text-2xl font-semibold tracking-tight text-foreground">{formatCurrency(usdcBalance?.available || '0')}</div>
+            {usdcBalance?.locked && parseFloat(usdcBalance.locked) > 0 && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Locked: {formatCurrency(usdcBalance.locked)}
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </DashboardWrapper>
 
       {/* SOL Position */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <CardTitle className="text-sm font-medium">SOL Holding</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-semibold tracking-tight text-foreground">{formatNumber(solBalance?.available || '0', 4)} SOL</div>
-          {solPosition && parseFloat(solPosition.size) > 0 && (
-            <p className="text-xs text-muted-foreground mt-1">
-              Avg Entry: ${formatNumber(solPosition.avgEntryPrice, 2)}
-            </p>
-          )}
-        </CardContent>
-      </Card>
+      <DashboardWrapper name="SOL Holding">
+        <Card>
+          <CardContent>
+            <div className="text-2xl font-semibold tracking-tight text-foreground">{formatNumber(solBalance?.available || '0', 4)} SOL</div>
+            {solPosition && parseFloat(solPosition.size) > 0 && (
+              <p className="text-xs text-muted-foreground mt-1">
+                Avg Entry: ${formatNumber(solPosition.avgEntryPrice, 2)}
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </DashboardWrapper>
 
       {/* Unrealized P&L */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <CardTitle className="text-sm font-medium">Unrealized P&L</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <div
-              className={`text-2xl font-semibold tracking-tight ${unrealizedPnL >= 0 ? 'text-green-500' : 'text-red-500'
+      <DashboardWrapper name="Unrealized P&L">
+        <Card>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <div
+                className={`text-2xl font-semibold tracking-tight ${unrealizedPnL >= 0 ? 'text-green-500' : 'text-red-500'
+                  }`}
+              >
+                {unrealizedPnL >= 0 ? '+' : ''}{formatCurrency(unrealizedPnL)}
+              </div>
+              {unrealizedPnL >= 0 ? (
+                <TrendingUp className="w-4 h-4 text-green-500" />
+              ) : (
+                <TrendingDown className="w-4 h-4 text-red-500" />
+              )}
+            </div>
+            <p
+              className={`text-xs mt-1 ${unrealizedPnLPercent >= 0 ? 'text-green-500' : 'text-red-500'
                 }`}
             >
-              {unrealizedPnL >= 0 ? '+' : ''}{formatCurrency(unrealizedPnL)}
-            </div>
-            {unrealizedPnL >= 0 ? (
-              <TrendingUp className="w-4 h-4 text-green-500" />
-            ) : (
-              <TrendingDown className="w-4 h-4 text-red-500" />
-            )}
-          </div>
-          <p
-            className={`text-xs mt-1 ${unrealizedPnLPercent >= 0 ? 'text-green-500' : 'text-red-500'
-              }`}
-          >
-            {unrealizedPnLPercent >= 0 ? '+' : ''}
-            {unrealizedPnLPercent.toFixed(2)}%
-          </p>
-        </CardContent>
-      </Card>
+              {unrealizedPnLPercent >= 0 ? '+' : ''}
+              {unrealizedPnLPercent.toFixed(2)}%
+            </p>
+          </CardContent>
+        </Card>
+      </DashboardWrapper>
     </div>
   );
 }
