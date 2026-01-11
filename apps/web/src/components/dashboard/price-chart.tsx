@@ -39,14 +39,14 @@ export function PriceChart({ prices }: PriceChartProps) {
   return (
     <DashboardWrapper name="SOL/USD Price Chart" className="h-full">
       <Card className="h-full">
-        <CardContent>
-          <div className="flex flex-col mb-4">
+        <CardContent className="h-full flex flex-col">
+          <div className="flex flex-col mb-4 shrink-0">
             <span className="text-2xl font-semibold tracking-tight text-foreground">
               ${parseFloat(solPrice).toFixed(2)}
             </span>
             <span className="text-sm text-muted-foreground">Real-time price via Pyth</span>
           </div>
-          <div className="h-[300px] w-full">
+          <div className="flex-1 w-full min-h-0">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />

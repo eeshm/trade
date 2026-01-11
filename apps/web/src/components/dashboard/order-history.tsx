@@ -20,8 +20,8 @@ export function OrderHistory({ orders }: OrderHistoryProps) {
   return (
     <DashboardWrapper name="Order History" className="h-full">
       <Card className="h-full">
-        <CardContent className="h-full">
-          <div className="space-y-3 max-h-[calc(100vh-300px)] overflow-y-auto pr-2">
+        <CardContent className="h-full flex flex-col">
+          <div className="space-y-3 h-full overflow-y-auto pr-2">
             {orders.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">No orders yet</p>

@@ -77,21 +77,21 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="w-full h-[calc(100vh-4rem)] p-4 space-y-4 overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-full">
+      <main className="w-full min-h-[calc(100vh-4rem)] p-4 space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* Top Row: Chart (Left 3/4) and Order Form (Right 1/4) */}
-          <div className="lg:col-span-9 h-[75%]">
+          <div className="lg:col-span-9 h-[70vh] min-h-[500px]">
             <PriceChart prices={tradingStore.prices} />
           </div>
-          <div className="lg:col-span-3 h-[75%]">
+          <div className="lg:col-span-3 h-[70vh] min-h-[500px]">
             <OrderForm />
           </div>
 
           {/* Bottom Row: Order History (Left 3/4) and Portfolio Summary (Right 1/4) */}
-          <div className="lg:col-span-9 h-[25%]">
+          <div className="lg:col-span-9 h-[20vh] min-h-[200px]">
             <OrderHistory orders={tradingStore.orders} />
           </div>
-          <div className="lg:col-span-3 h-[25%]">
+          <div className="lg:col-span-3 h-[20vh] min-h-[200px]">
             <PortfolioSummary
               balances={tradingStore.balances}
               positions={tradingStore.positions}
