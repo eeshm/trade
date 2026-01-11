@@ -1,7 +1,18 @@
-'use client';
-
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
 import { Providers } from './providers';
 import Header from '@/components/header';
+import { Toaster } from 'sonner';
+
+const geistSans = Geist({
+    variable: '--font-geist-sans',
+    subsets: ['latin'],
+});
+
+const geistMono = Geist_Mono({
+    variable: '--font-geist-mono',
+    subsets: ['latin'],
+});
 
 export const metadata = {
     title: 'Solana Paper Trading',
@@ -15,12 +26,12 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" className="h-full bg-gray-50 dark:bg-gray-900">
-            <body className="h-full flex flex-col">
+            <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-full flex flex-col`}>
                 <Providers>
-                    <Header />
                     <main className="flex-1 container mx-auto p-4">
                         {children}
                     </main>
+                    <Toaster position="top-right" />
                 </Providers>
             </body>
         </html>
