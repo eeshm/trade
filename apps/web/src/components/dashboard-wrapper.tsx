@@ -17,7 +17,7 @@ export const DashboardWrapper = ({
     return (
         <div
             className={cn(
-                "bg-sidebar-border/40 p-1  flex  flex-col rounded-[14px] group dark:shadow-md border border-sidebar-border/50",
+                "bg-sidebar-border/40 p-1 pb-[2px] flex flex-col rounded-[14px] group dark:shadow-md border border-sidebar-border/50",
                 className
             )}
         >
@@ -29,7 +29,7 @@ export const DashboardWrapper = ({
                 </div>
 
             </div>
-            <div className="h-full">
+            <div className="flex-1 w-full grid">
                 {children}
             </div>
         </div >
