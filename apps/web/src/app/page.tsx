@@ -59,24 +59,25 @@ export default function Home() {
   }, [wsConnected, subscribe]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
-        <div className="max-w-360  mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Paper Trading</h1>
-              <p className="text-sm text-muted-foreground">
-                WebSocket: {wsConnected ? '🟢 Connected' : '🔴 Disconnected'}
-              </p>
+      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-xl font-semibold tracking-tight">Paper Trading</h1>
+            <div className={`px-2 py-0.5 rounded-full text-xs font-medium border ${wsConnected
+                ? 'bg-green-500/10 text-green-500 border-green-500/20'
+                : 'bg-red-500/10 text-red-500 border-red-500/20'
+              }`}>
+              {wsConnected ? 'Live' : 'Disconnected'}
             </div>
-            <WalletConnect />
           </div>
+          <WalletConnect />
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-360 mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* Portfolio Summary */}
         <PortfolioSummary
           balances={tradingStore.balances}
@@ -84,15 +85,15 @@ export default function Home() {
         />
 
         {/* Trading Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Column: Chart and Order Form */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-8 space-y-6">
             <PriceChart prices={tradingStore.prices} />
             <OrderForm />
           </div>
 
           {/* Right Column: Order History */}
-          <div>
+          <div className="lg:col-span-4">
             <OrderHistory orders={tradingStore.orders} />
           </div>
         </div>

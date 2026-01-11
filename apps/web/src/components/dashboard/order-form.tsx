@@ -58,8 +58,8 @@ export function OrderForm() {
   const estimatedCost = (parseFloat(size) || 0) * solPrice;
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="p-5">
+      <CardHeader className="pb-4">
         <CardTitle>Place Order</CardTitle>
       </CardHeader>
       <CardContent>
@@ -138,8 +138,8 @@ export function OrderForm() {
               type="submit"
               disabled={isLoading || !size}
               className={`w-full ${side === 'buy'
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-600 hover:bg-red-700'
+                ? 'bg-green-600 hover:bg-green-700'
+                : 'bg-red-600 hover:bg-red-700'
                 }`}
             >
               {isLoading ? (

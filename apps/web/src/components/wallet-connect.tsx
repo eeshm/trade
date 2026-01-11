@@ -14,7 +14,7 @@ export function WalletConnect() {
   if (!connected) {
     return (
       <div className="flex items-center gap-2">
-        <WalletMultiButton style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }} />
+        <WalletMultiButton className="bg-primary! text-primary-foreground! hover:bg-primary/90! h-10! rounded-md! px-4! font-medium!" />
       </div>
     );
   }
@@ -22,7 +22,7 @@ export function WalletConnect() {
   if (isAuthenticated && user) {
     return (
       <div className="flex items-center gap-4">
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground hidden sm:block">
           {user.walletAddress.slice(0, 4)}...
           {user.walletAddress.slice(-4)}
         </div>
@@ -41,7 +41,7 @@ export function WalletConnect() {
 
   return (
     <div>
-      <WalletMultiButton style={{ backgroundColor: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }} />
+      <WalletMultiButton className="bg-primary! text-primary-foreground! hover:bg-primary/90! h-10! rounded-md! px-4! font-medium!" />
     </div>
   );
 }

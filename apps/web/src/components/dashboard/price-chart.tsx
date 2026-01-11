@@ -36,11 +36,11 @@ export function PriceChart({ prices }: PriceChartProps) {
   }, [solPrice]);
 
   return (
-    <Card>
-      <CardHeader>
+    <Card className="p-5">
+      <CardHeader className="pb-4">
         <CardTitle>SOL/USD</CardTitle>
         <div className="flex flex-col">
-          <span className="text-3xl font-bold">
+          <span className="text-2xl font-semibold tracking-tight text-foreground">
             ${parseFloat(solPrice).toFixed(2)}
           </span>
           <span className="text-sm text-muted-foreground">Real-time price via Pyth</span>

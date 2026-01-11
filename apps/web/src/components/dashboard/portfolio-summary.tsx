@@ -37,25 +37,25 @@ export function PortfolioSummary({
     entryValue > 0 ? (unrealizedPnL / entryValue) * 100 : 0;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
       {/* Total Portfolio Value */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <Card className="p-5">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle className="text-sm font-medium">Portfolio Value</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatCurrency(totalValue)}</div>
+          <div className="text-2xl font-semibold tracking-tight text-foreground">{formatCurrency(totalValue)}</div>
           <p className="text-xs text-muted-foreground mt-1">Initial: $1,000,000</p>
         </CardContent>
       </Card>
 
       {/* USDC Balance */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <Card className="p-5">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle className="text-sm font-medium">USDC Available</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatCurrency(usdcBalance?.available || '0')}</div>
+          <div className="text-2xl font-semibold tracking-tight text-foreground">{formatCurrency(usdcBalance?.available || '0')}</div>
           {usdcBalance?.locked && parseFloat(usdcBalance.locked) > 0 && (
             <p className="text-xs text-muted-foreground mt-1">
               Locked: {formatCurrency(usdcBalance.locked)}
@@ -65,12 +65,12 @@ export function PortfolioSummary({
       </Card>
 
       {/* SOL Position */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <Card className="p-5">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle className="text-sm font-medium">SOL Holding</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{formatNumber(solBalance?.available || '0', 4)} SOL</div>
+          <div className="text-2xl font-semibold tracking-tight text-foreground">{formatNumber(solBalance?.available || '0', 4)} SOL</div>
           {solPosition && parseFloat(solPosition.size) > 0 && (
             <p className="text-xs text-muted-foreground mt-1">
               Avg Entry: ${formatNumber(solPosition.avgEntryPrice, 2)}
@@ -80,14 +80,14 @@ export function PortfolioSummary({
       </Card>
 
       {/* Unrealized P&L */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <Card className="p-5">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <CardTitle className="text-sm font-medium">Unrealized P&L</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
             <div
-              className={`text-2xl font-bold ${unrealizedPnL >= 0 ? 'text-green-500' : 'text-red-500'
+              className={`text-2xl font-semibold tracking-tight ${unrealizedPnL >= 0 ? 'text-green-500' : 'text-red-500'
                 }`}
             >
               {unrealizedPnL >= 0 ? '+' : ''}{formatCurrency(unrealizedPnL)}
