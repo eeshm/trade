@@ -60,8 +60,8 @@ export function OrderForm() {
 
   return (
     <DashboardWrapper name="Place Order" className="h-full">
-      <Card className="h-full">
-        <CardContent>
+      <Card className="h-full overflow-hidden">
+        <CardContent className="h-full overflow-y-auto p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Side Selection */}
             <div className="flex gap-4">

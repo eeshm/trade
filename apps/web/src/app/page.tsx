@@ -62,10 +62,10 @@ export default function Home() {
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className="w-full px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-semibold tracking-tight">Paper Trading</h1>
-            <div className={`px-2 py-0.5 rounded-full text-xs font-medium border ${wsConnected
+            <h1 className="text-lg font-semibold tracking-tight">Paper Trading</h1>
+            <div className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${wsConnected
               ? 'bg-green-500/10 text-green-500 border-green-500/20'
               : 'bg-red-500/10 text-red-500 border-red-500/20'
               }`}>
@@ -80,18 +80,18 @@ export default function Home() {
       <main className="w-full min-h-[calc(100vh-4rem)] p-4 space-y-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* Top Row: Chart (Left 3/4) and Order Form (Right 1/4) */}
-          <div className="lg:col-span-9 h-[70vh] min-h-[500px]">
+          <div className="lg:col-span-9 min-h-[600px]">
             <PriceChart prices={tradingStore.prices} />
           </div>
-          <div className="lg:col-span-3 h-[70vh] min-h-[500px]">
+          <div className="lg:col-span-3 min-h-[600px]">
             <OrderForm />
           </div>
 
           {/* Bottom Row: Order History (Left 3/4) and Portfolio Summary (Right 1/4) */}
-          <div className="lg:col-span-9 h-[20vh] min-h-[200px]">
+          <div className="lg:col-span-9 min-h-[300px]">
             <OrderHistory orders={tradingStore.orders} />
           </div>
-          <div className="lg:col-span-3 h-[20vh] min-h-[200px]">
+          <div className="lg:col-span-3 min-h-[300px]">
             <PortfolioSummary
               balances={tradingStore.balances}
               positions={tradingStore.positions}

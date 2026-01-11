@@ -43,9 +43,9 @@ export function PortfolioSummary({
 
   return (
     <DashboardWrapper name="Portfolio Overview" className={className}>
-      <Card className="h-full border-0 shadow-none">
-        <CardContent className="p-4 h-full">
-          <div className="grid grid-cols-2 gap-4 h-full">
+      <Card className="h-full border-0 shadow-none overflow-hidden">
+        <CardContent className="p-4 h-full min-h-0">
+          <div className="grid grid-cols-2 gap-4 h-full overflow-y-auto">
             {/* Total Portfolio Value */}
             <div className="space-y-1">
               <p className="text-xs font-medium text-muted-foreground">Total Value</p>

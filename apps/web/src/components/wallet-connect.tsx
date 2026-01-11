@@ -14,7 +14,7 @@ export function WalletConnect() {
   if (!connected) {
     return (
       <div className="flex items-center gap-2">
-        <WalletMultiButton className="bg-primary! text-primary-foreground! hover:bg-primary/90! h-10! rounded-md! px-4! font-medium!" />
+        <WalletMultiButton className="bg-zinc-800! text-white! hover:bg-zinc-700! h-9! rounded-md! px-4! text-sm! font-medium! border! border-zinc-700!" />
       </div>
     );
   }
@@ -41,7 +41,7 @@ export function WalletConnect() {
 
   return (
     <div>
-      <WalletMultiButton className="bg-primary! text-primary-foreground! hover:bg-primary/90! h-10! rounded-md! px-4! font-medium!" />
+      <WalletMultiButton className="bg-zinc-800! text-white! hover:bg-zinc-700! h-9! rounded-md! px-4! text-sm! font-medium! border! border-zinc-700!" />
     </div>
   );
 }

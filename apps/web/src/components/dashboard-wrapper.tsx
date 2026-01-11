@@ -29,7 +29,7 @@ export const DashboardWrapper = ({
                 </div>
 
             </div>
-            <div className="flex-1 w-full grid">
+            <div className="flex-1 w-full grid min-h-0 min-w-0">
                 {children}
             </div>
         </div >
