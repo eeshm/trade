@@ -11,16 +11,19 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { WalletConnect } from '@/components/wallet-connect';
 import { useAuth } from '@/hooks/useAuth';
+import { formatCurrency } from '@/lib/utils';
 
 export function OrderForm() {
   const [side, setSide] = useState<OrderSide>('buy');
   const [size, setSize] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { addOrder, prices } = useTradingStore();
+  const { addOrder, prices, balances } = useTradingStore();
   const { connected } = useWallet();
   const { isAuthenticated, login } = useAuth();
+
+  const usdcBalance = balances.find((b) => b.asset === 'USDC');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,15 +64,15 @@ export function OrderForm() {
   return (
     <DashboardWrapper name="Place Order" className="h-full">
       <Card className="h-full overflow-hidden">
-        <CardContent className="h-full overflow-y-auto p-6">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <CardContent className="h-full overflow-y-auto">
+          <form onSubmit={handleSubmit} className="space-y-3">
             {/* Side Selection */}
-            <div className="flex gap-4">
+            <div className="flex bg-card p-[2px]">
               <Button
                 type="button"
                 variant={side === 'buy' ? 'default' : 'outline'}
                 onClick={() => setSide('buy')}
-                className={`flex-1 ${side === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : ''}`}
+                className={`flex-1 rounded-xs ${side === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : ''}`}
               >
                 Buy SOL
               </Button>
@@ -77,32 +80,43 @@ export function OrderForm() {
                 type="button"
                 variant={side === 'sell' ? 'default' : 'outline'}
                 onClick={() => setSide('sell')}
-                className={`flex-1 ${side === 'sell' ? 'bg-red-600 hover:bg-red-700 text-white' : ''}`}
+                className={`flex-1 rounded-xs ${side === 'sell' ? 'bg-red-600 hover:bg-red-700 text-white' : ''}`}
               >
                 Sell SOL
               </Button>
             </div>
+            {/* Make the balance to end */}
+            <div className='flex text-xs text-muted-foreground'>
+              Available to trade:
+              <span className='ml-auto'>
+                {formatCurrency(usdcBalance?.available || 0)}
+              </span>
+            </div>
 
             {/* Size Input */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-muted-foreground">
+              <label className="text-xs font-medium text-muted-foreground">
                 Size (SOL)
               </label>
               <Input
-                type="number"
-                step="0.01"
-                min="0.01"
+                type="text"
                 value={size}
-                onChange={(e) => setSize(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '' || /^\d*\.?\d*$/.test(value)) {
+                    setSize(value);
+                  } else {
+                  }
+                }}
                 placeholder="Enter SOL amount"
               />
               <p className="text-xs text-muted-foreground">
-                Estimated cost: ${estimatedCost.toFixed(2)} USDC
+                Estimated cost: ${estimatedCost.toFixed(5)} USDC
               </p>
             </div>
 
             {/* Order Details */}
-            <div className="bg-muted rounded p-4 text-sm space-y-2">
+            <div className="text-xs space-y-2">
               <div className="flex justify-between text-muted-foreground">
                 <span>Price per SOL:</span>
                 <span className="text-foreground">${solPrice.toFixed(2)}</span>
@@ -122,7 +136,7 @@ export function OrderForm() {
             {/* Submit Button */}
             {!connected ? (
               <div className="w-full flex justify-center">
-                <WalletMultiButton className="w-full bg-primary! hover:bg-primary/90! h-10! rounded-md! text-sm! font-medium!" />
+                <WalletConnect className="w-full" />
               </div>
             ) : !isAuthenticated ? (
               <Button

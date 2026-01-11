@@ -15,8 +15,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
-export function WalletConnect() {
+interface WalletConnectProps {
+  className?: string;
+}
+
+export function WalletConnect({ className }: WalletConnectProps) {
   const { connected, publicKey, disconnect } = useWallet();
   const { setVisible } = useWalletModal();
   const { isAuthenticated, logout } = useAuth();
@@ -38,7 +43,7 @@ export function WalletConnect() {
       <Button
         onClick={() => setVisible(true)}
         variant="secondary"
-        className="font-medium"
+        className={cn("font-medium", className)}
       >
         Connect Wallet
       </Button>
@@ -48,8 +53,8 @@ export function WalletConnect() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="font-mono">
-          {publicKey?.toBase58().slice(0, 4)}...{publicKey?.toBase58().slice(-4)}
+        <Button variant="outline" className="font-mono outline-0 hover:border-none border-none hover:outline-0 hover:bg-border hover:cursor-pointer bg-border/80">
+          {publicKey?.toBase58().slice(0, 4)}...{publicKey?.toBase58().slice(-6)}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 bg-border">
