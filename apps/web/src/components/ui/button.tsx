@@ -6,7 +6,7 @@ import { cn } from '../../lib/utils';
 const Button = React.forwardRef<
   HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    variant?: 'default' | 'outline' | 'ghost' | 'destructive';
+    variant?: 'default' | 'outline' | 'ghost' | 'destructive' | 'secondary';
     size?: 'default' | 'sm' | 'lg';
   }
 >(
@@ -27,6 +27,7 @@ const Button = React.forwardRef<
         "border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground",
       ghost: 'hover:bg-accent hover:text-accent-foreground',
       destructive: 'bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40',
+      secondary: 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
     };
 
     const sizes = {

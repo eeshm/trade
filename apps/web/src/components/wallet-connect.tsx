@@ -2,46 +2,65 @@
 
 import React from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { useAuth } from "../hooks/useAuth";
 import { Button } from './ui/button';
-import { LogOut } from 'lucide-react';
+import { LogOut, Copy, Wallet } from 'lucide-react';
+import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function WalletConnect() {
-  const { connected } = useWallet();
-  const { isAuthenticated, user, logout } = useAuth();
+  const { connected, publicKey, disconnect } = useWallet();
+  const { setVisible } = useWalletModal();
+  const { isAuthenticated, logout } = useAuth();
+
+  const copyAddress = () => {
+    if (publicKey) {
+      navigator.clipboard.writeText(publicKey.toBase58());
+      toast.success('Address copied to clipboard');
+    }
+  };
+
+  const handleDisconnect = async () => {
+    await disconnect();
+    logout();
+  };
 
   if (!connected) {
     return (
-      <div className="flex items-center gap-2">
-        <WalletMultiButton className="bg-zinc-800! text-white! hover:bg-zinc-700! h-9! rounded-md! px-4! text-sm! font-medium! border! border-zinc-700!" />
-      </div>
-    );
-  }
-
-  if (isAuthenticated && user) {
-    return (
-      <div className="flex items-center gap-4">
-        <div className="text-sm text-muted-foreground hidden sm:block">
-          {user.walletAddress.slice(0, 4)}...
-          {user.walletAddress.slice(-4)}
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={logout}
-          className="flex items-center gap-2"
-        >
-          <LogOut className="w-4 h-4" />
-          Logout
-        </Button>
-      </div>
+      <Button
+        onClick={() => setVisible(true)}
+        variant="secondary"
+        className="font-medium"
+      >
+        Connect Wallet
+      </Button>
     );
   }
 
   return (
-    <div>
-      <WalletMultiButton className="bg-zinc-800! text-white! hover:bg-zinc-700! h-9! rounded-md! px-4! text-sm! font-medium! border! border-zinc-700!" />
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" className="font-mono">
+          {publicKey?.toBase58().slice(0, 4)}...{publicKey?.toBase58().slice(-4)}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56 bg-border">
+        <DropdownMenuItem onClick={copyAddress} className='hover:bg-card/60 hover:cursor-pointer'>
+          {publicKey?.toBase58().slice(0, 4)}...{publicKey?.toBase58().slice(-6)}
+          <Copy className="mr-0 h-4 w-8" />
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDisconnect} className='hover:bg-card/60 hover:cursor-pointer'>
+          <span>Disconnect</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
