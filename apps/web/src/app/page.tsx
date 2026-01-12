@@ -83,15 +83,16 @@ export default function Home() {
           <div className="lg:col-span-9 min-h-[600px]">
             <PriceChart prices={tradingStore.prices} />
           </div>
-          <div className="lg:col-span-3 min-h-[600px]">
+          <div className="lg:col-span-3 ">
             <OrderForm />
           </div>
 
           {/* Bottom Row: Order History (Left 3/4) and Portfolio Summary (Right 1/4) */}
-          <div className="lg:col-span-9 min-h-[300px]">
-            <OrderHistory orders={tradingStore.orders} />
+          <div className="lg:col-span-9 ">
+            {/* <OrderHistory orders={tradingStore.orders} /> */}
+            <OrderHistory  />
           </div>
-          <div className="lg:col-span-3 min-h-[300px]">
+          <div className="lg:col-span-3">
             <PortfolioSummary
               balances={tradingStore.balances}
               positions={tradingStore.positions}
