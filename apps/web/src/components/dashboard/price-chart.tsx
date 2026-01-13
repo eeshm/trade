@@ -24,7 +24,7 @@ export function PriceChart({ prices }: PriceChartProps) {
   const lastCandleTimeRef = useRef<number>(0);
 
   const solPrice = prices['SOL']?.price || '0';
-  const currentPrice = parseFloat(solPrice) || 150;
+  const currentPrice = parseFloat(solPrice) || 0;
 
   // Generate initial candlestick data (can be converted to area data)
   const generateInitialData = useCallback(() => {

@@ -1,92 +1,18 @@
 'use client';
 
 import { Order } from '@/types';
-import { formatCurrency, formatDate, formatNumber } from '@/lib/utils';
+import { formatDate, formatNumber } from '@/lib/utils';
 import { DashboardWrapper } from '@/components/dashboard-wrapper';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 interface OrderHistoryProps {
-  orders?: Order[];
+  orders: Order[];
 }
-export const sampleOrders: Order[] = [
-  {
-    orderId: 1,
-    side: "buy",
-    status: "filled",
-    baseAsset: "SOL",
-    quoteAsset: "USDC",
-    requestedSize: "5",
-    executedPrice: "195.50",
-    executedSize: "5",
-    feesApplied: "9.78",
-    createdAt: "2026-01-10T09:15:30Z",
-    updatedAt: "2026-01-10T09:15:45Z",
-  },
-  {
-    orderId: 12,
-    side: "sell",
-    status: "filled",
-    baseAsset: "SOL",
-    quoteAsset: "USDC",
-    requestedSize: "2",
-    executedPrice: "210.00",
-    executedSize: "2",
-    feesApplied: "4.20",
-    createdAt: "2026-01-11T11:20:10Z",
-    updatedAt: "2026-01-11T11:20:10Z",
-  },
-  {
-    orderId: 2,
-    side: "sell",
-    status: "filled",
-    baseAsset: "SOL",
-    quoteAsset: "USDC",
-    requestedSize: "2",
-    executedPrice: "210.00",
-    executedSize: "2",
-    feesApplied: "4.20",
-    createdAt: "2026-01-11T11:20:10Z",
-    updatedAt: "2026-01-11T11:20:10Z",
-  },
-  {
-    orderId: 3,
-    side: "sell",
-    status: "filled",
-    baseAsset: "SOL",
-    quoteAsset: "USDC",
-    requestedSize: "2",
-    executedPrice: "210.00",
-    executedSize: "2",
-    feesApplied: "4.20",
-    createdAt: "2026-01-11T11:20:10Z",
-    updatedAt: "2026-01-11T11:20:10Z",
-  },
-  {
-    orderId: 4,
-    side: "sell",
-    status: "filled",
-    baseAsset: "SOL",
-    quoteAsset: "USDC",
-    requestedSize: "2",
-    executedPrice: "210.00",
-    executedSize: "2",
-    feesApplied: "4.20",
-    createdAt: "2026-01-11T11:20:10Z",
-    updatedAt: "2026-01-11T11:20:10Z",
-  },
-];
-
 
 function Description({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <p className={cn("text-xs font-medium text-muted-foreground", className)}>{children}</p>
-  );
-}
-
-function Value({ children, className }: { children: React.ReactNode; className?: string }) {
-  return (
-    <div className={cn("text-sm font-medium tracking-tight text-foreground", className)}>{children}</div>
   );
 }
 
@@ -121,7 +47,7 @@ function OrderRow({ order, isBuy }: OrderRowProps) {
   );
 }
 
-export function OrderHistory({ orders = sampleOrders }: OrderHistoryProps) {
+export function OrderHistory({ orders }: OrderHistoryProps) {
   return (
     <DashboardWrapper name="Order History" className="h-full">
       <Card className="h-full border-0 shadow-none overflow-hidden flex flex-col">

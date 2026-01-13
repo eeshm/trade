@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletConnect } from '@/components/wallet-connect';
 import { useAuth } from '@/hooks/useAuth';
+import { useAuthStore } from '@/store/auth';
 import { formatCurrency } from '@/lib/utils';
 import {
   DropdownMenu,
@@ -28,7 +29,12 @@ export function OrderForm() {
   const [isLoading, setIsLoading] = useState(false);
   const { addOrder, prices, balances } = useTradingStore();
   const { connected } = useWallet();
-  const { isAuthenticated, login } = useAuth();
+  const { login } = useAuth();
+
+  // Subscribe directly to auth store for proper reactivity
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  console.log('OrderForm render - connected:', connected, 'isAuthenticated:', isAuthenticated);
 
   const usdcBalance = balances.find((b) => b.asset === 'USDC');
   const solPrice = parseFloat(prices.SOL?.price) || 0;

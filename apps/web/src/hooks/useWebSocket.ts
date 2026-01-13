@@ -180,27 +180,27 @@ export function useWebSocket({ token, enabled = true }: UseWebSocketProps) {
     send({ type: 'ping' });
   }, [send]);
 
-  // Connect on mount and when token changes
+  // Connect on mount when enabled
   useEffect(() => {
-    if (enabled && token) {
+    if (enabled) {
       connect();
     }
 
     return () => {
       disconnect();
     };
-  }, [enabled, token, connect, disconnect]);
+  }, [enabled, connect, disconnect]);
 
   // Heartbeat ping
   useEffect(() => {
-    if (!enabled || !token) return;
+    if (!enabled) return;
 
     const interval = setInterval(() => {
       ping();
     }, 30000); // Ping every 30 seconds
 
     return () => clearInterval(interval);
-  }, [enabled, token, ping]);
+  }, [enabled, ping]);
 
   return {
     isConnected: wsRef.current?.readyState === WebSocket.OPEN,

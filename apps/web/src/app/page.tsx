@@ -17,9 +17,11 @@ export default function Home() {
   const { isAuthenticated, token } = useAuth();
   const { setBalances, setPositions, setOrders } = useTradingStore();
   const tradingStore = useTradingStore();
+
+  // WebSocket is always enabled for prices, token is optional for auth
   const { isConnected: wsConnected, subscribe } = useWebSocket({
     token,
-    enabled: isAuthenticated,
+    enabled: true, // Always enabled for price feed
   });
 
   // Load portfolio data from backend on mount
@@ -49,14 +51,17 @@ export default function Home() {
     }
   }, [isAuthenticated, token, setBalances, setPositions, setOrders]);
 
+  // Subscribe to prices always, portfolio/orders only when authenticated
   useEffect(() => {
-    // Subscribe to real-time updates
     if (wsConnected) {
       subscribe('prices');
-      subscribe('portfolio');
-      subscribe('orders');
+
+      if (isAuthenticated) {
+        subscribe('portfolio');
+        subscribe('orders');
+      }
     }
-  }, [wsConnected, subscribe]);
+  }, [wsConnected, subscribe, isAuthenticated]);
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
@@ -89,8 +94,7 @@ export default function Home() {
 
           {/* Bottom Row: Order History (Left 3/4) and Portfolio Summary (Right 1/4) */}
           <div className="lg:col-span-9 h-[450px]">
-            {/* <OrderHistory orders={tradingStore.orders} /> */}
-            <OrderHistory />
+            <OrderHistory orders={tradingStore.orders} />
           </div>
           <div className="lg:col-span-3 h-[200px] lg:h-[450px]">
             <PortfolioSummary

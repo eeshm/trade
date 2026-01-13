@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-// import { signMessage } from '@solana/wallet-adapter-base';
 import bs58 from 'bs58';
 import { apiClient } from '../lib/api-client';
 import { useAuthStore } from '../store/auth';
@@ -8,7 +7,13 @@ import { toast } from 'sonner';
 
 export function useAuth() {
   const { publicKey, signMessage: walletSignMessage } = useWallet();
-  const authStore = useAuthStore();
+  
+  // Subscribe to individual store values for proper reactivity
+  const user = useAuthStore((state) => state.user);
+  const token = useAuthStore((state) => state.token);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const setUser = useAuthStore((state) => state.setUser);
+  const logoutStore = useAuthStore((state) => state.logout);
 
   const getNonce = useCallback(async () => {
     if (!publicKey) {
@@ -42,7 +47,19 @@ export function useAuth() {
         throw new Error('Wallet does not support signing');
       }
 
-      const signature = await walletSignMessage(message);
+      let signature: Uint8Array;
+      try {
+        signature = await walletSignMessage(message);
+      } catch (signError: any) {
+        console.error('Wallet signing failed:', signError);
+        if (signError?.name === 'WalletSignMessageError') {
+          toast.error('Wallet signing was cancelled or failed. Please try again.');
+        } else {
+          toast.error('Failed to sign message with wallet.');
+        }
+        throw signError;
+      }
+      
       const signatureString = bs58.encode(signature);
 
       // Step 3: Send signature to backend for login
@@ -52,37 +69,43 @@ export function useAuth() {
         nonce,
       });
 
+      console.log('Login response:', loginResponse);
+      
       // Store auth state
-      authStore.setUser(loginResponse.user, loginResponse.token);
+      setUser(loginResponse.user, loginResponse.token);
+      console.log('Auth state updated - user:', loginResponse.user, 'token:', !!loginResponse.token);
       toast.success('Logged in successfully!');
 
       return loginResponse;
-    } catch (error) {
-      console.error('Login failed:', await error);
-      toast.error('Failed to login. Please try again.');
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      // Only show generic error if not already shown by wallet signing
+      if (error?.name !== 'WalletSignMessageError') {
+        toast.error('Failed to login. Please try again.');
+      }
       throw error;
     }
-  }, [publicKey, walletSignMessage, authStore, getNonce]);
+  }, [publicKey, walletSignMessage, setUser, getNonce]);
 
   const logout = useCallback(async () => {
     try {
       await apiClient.logout();
-      authStore.logout();
+      logoutStore();
       toast.success('Logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
       // Still clear local state even if API call fails
-      authStore.logout();
+      logoutStore();
       toast.success('Logged out');
     }
-  }, [authStore]);
+  }, [logoutStore]);
 
   return {
     publicKey: publicKey?.toBase58(),
     isConnected: !!publicKey,
-    user: authStore.user,
-    token: authStore.token,
-    isAuthenticated: authStore.isAuthenticated,
+    user,
+    token,
+    isAuthenticated,
     login,
     logout,
     getNonce,
