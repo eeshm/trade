@@ -22,7 +22,7 @@ class ApiClient {
       baseURL: API_BASE_URL,
       timeout: 10000,
     });
-
+ 
     // Add request interceptor for auth token
     this.client.interceptors.request.use((config) => {
       if (this.token) {
@@ -54,12 +54,16 @@ class ApiClient {
 
   setToken(token: string) {
     this.token = token;
-    localStorage.setItem('authToken', token);
+    if(typeof window !== 'undefined') {
+      localStorage.setItem('authToken', token);
+    }
   }
 
   clearToken() {
     this.token = null;
-    localStorage.removeItem('authToken');
+    if(typeof window !== 'undefined') {
+      localStorage.removeItem('authToken');
+    }
   }
 
   getToken() {

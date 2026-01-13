@@ -58,7 +58,7 @@ export function useAuth() {
 
       return loginResponse;
     } catch (error) {
-      console.error('Login failed:', error);
+      console.error('Login failed:', await error);
       toast.error('Failed to login. Please try again.');
       throw error;
     }

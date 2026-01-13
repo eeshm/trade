@@ -95,3 +95,170 @@ Slipstream
 SolLab 
 DryRun 
 SolArena 
+
+
+
+
+
+
+
+Below is a **strict v1 definition**. If it’s not on this list, it should wait.
+
+---
+
+# ✅ v1 = “Solana Trading Playground (MVP)”
+
+**Goal of v1:**
+
+> Prove that new users want a safe place to practice Solana trading.
+
+Nothing more.
+
+---
+
+## 🧩 Core v1 Features (NON-NEGOTIABLE)
+
+### 1️⃣ Paper Wallet
+
+* Starts with fake SOL (e.g. 100 SOL)
+* Simple balances (SOL only)
+* Reset option
+
+Why:
+
+> Everything else depends on this.
+
+---
+
+### 2️⃣ Spot Trading (SOL only)
+
+* Buy / sell SOL with fake SOL
+* Market-style execution (no limit orders)
+* Fixed fee (0.1%)
+
+Why:
+
+> One asset keeps UX and logic simple.
+
+---
+
+### 3️⃣ Real-Time Prices
+
+* Live SOL price feed
+* Clear price chart (basic)
+
+Why:
+
+> Without this, it’s not real practice.
+
+---
+
+### 4️⃣ Simple Fee + Slippage Simulation
+
+* Fixed 0.1% fee
+* Optional tiny slippage
+
+Why:
+
+> Teach “trades aren’t free” without complexity.
+
+---
+
+### 5️⃣ Weekly Leaderboard
+
+* Rank by PnL %
+* Reset weekly
+* Top 10 / Top 100
+
+Why:
+
+> Engagement + retention signal.
+
+---
+
+### 6️⃣ Guided Tutorials / Quests (3–5)
+
+Examples:
+
+* “Make your first trade”
+* “Buy vs sell”
+* “What is slippage?”
+* “Why fees matter”
+
+Why:
+
+> This is your onboarding story.
+
+---
+
+### 7️⃣ Wallet Connect (Read-Only)
+
+* Phantom / Solflare
+* No signing
+* Used as user identity
+
+Why:
+
+> Web3-native onboarding without risk.
+
+---
+
+## 🚫 Explicitly OUT of v1
+
+Do NOT add these yet:
+
+* ❌ Jupiter routing
+* ❌ Memecoins
+* ❌ Perps
+* ❌ NFTs
+* ❌ Copy trading
+* ❌ Bots
+* ❌ Social feeds
+* ❌ Dynamic fees
+
+v1 ≠ “almost real trading”
+v1 = “safe learning environment”
+
+---
+
+## 📐 Technical Constraints (important)
+
+v1 should:
+
+* Work with **mocked or simple logic**
+* Have **clean abstractions** (fees, execution)
+* Be **upgrade-friendly** to v2
+
+If a feature makes upgrading harder → cut it.
+
+---
+
+## 🧪 Success Metrics for v1 (what you track)
+
+Even basic metrics :
+
+* Users who complete first trade
+* Tutorials completed
+* Trades per user
+* % returning after 7 days
+
+You don’t need many users — just signal.
+
+---
+
+## 🧾 How v1 is described publicly (copy this)
+
+> “A Solana-native paper trading playground that lets new users practice trading with fake SOL before using real money.”
+
+Simple. Honest. Fundable.
+
+---
+
+## 🏁 v1 Launch Checklist
+
+Before you ship:
+
+* [ ] Can a user trade in <60 seconds?
+* [ ] No wallet signing required?
+* [ ] No broken edge cases?
+* [ ] Tutorials actually guide actions?
