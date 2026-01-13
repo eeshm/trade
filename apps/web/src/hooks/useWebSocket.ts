@@ -89,8 +89,15 @@ export function useWebSocket({ token, enabled = true }: UseWebSocketProps) {
   );
 
   const connect = useCallback(() => {
-    if (wsRef.current?.readyState === WebSocket.OPEN) {
+    // Prevent multiple simultaneous connections
+    if (wsRef.current?.readyState === WebSocket.OPEN || wsRef.current?.readyState === WebSocket.CONNECTING) {
       return;
+    }
+
+    // Close existing connection if any
+    if (wsRef.current) {
+      wsRef.current.close();
+      wsRef.current = null;
     }
 
     try {
@@ -103,25 +110,49 @@ export function useWebSocket({ token, enabled = true }: UseWebSocketProps) {
 
         // Authenticate if token is available
         if (token) {
-          ws.send(JSON.stringify({ type: 'auth', token }));
+          try {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: 'auth', token }));
+            }
+          } catch (error) {
+            console.error('Failed to send auth message:', error);
+          }
         }
 
         // Resubscribe to channels
         subscriptions.current.forEach((channel) => {
-          ws.send(JSON.stringify({ type: 'subscribe', channel }));
+          try {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: 'subscribe', channel }));
+            }
+          } catch (error) {
+            console.error(`Failed to send subscribe message for ${channel}:`, error);
+          }
         });
       };
 
       ws.onmessage = handleMessage;
 
       ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        toast.error('WebSocket connection error');
+        // Only log errors, don't show toast for already-closed connections
+        // The onclose handler will handle user notification if needed
+        if (ws.readyState !== WebSocket.CLOSED) {
+          console.error('WebSocket error:', error);
+        } else {
+          console.warn('WebSocket error on closed connection (normal):', error);
+        }
       };
 
-      ws.onclose = () => {
-        console.log('WebSocket disconnected');
+      ws.onclose = (event) => {
+        console.log('WebSocket disconnected', { code: event.code, reason: event.reason, wasClean: event.wasClean });
         wsRef.current = null;
+
+        // Only show error toast for unexpected closures (not code 1000 = normal closure)
+        // Code 1006 (abnormal closure) is common and will be handled by reconnection
+        if (event.code !== 1000 && event.code !== 1001 && reconnectAttempts.current === 0) {
+          // Only show on first disconnect, not during reconnection attempts
+          toast.error('WebSocket connection lost. Reconnecting...');
+        }
 
         // Attempt to reconnect
         if (
@@ -141,8 +172,9 @@ export function useWebSocket({ token, enabled = true }: UseWebSocketProps) {
       wsRef.current = ws;
     } catch (error) {
       console.error('Failed to connect WebSocket:', error);
+      toast.error('Failed to connect to WebSocket server');
     }
-  }, [enabled, token, handleMessage, WS_URL]);
+  }, [enabled, token, WS_URL]); // Removed handleMessage from deps to prevent reconnections
 
   const disconnect = useCallback(() => {
     if (wsRef.current) {

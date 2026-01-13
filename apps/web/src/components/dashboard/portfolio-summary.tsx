@@ -20,9 +20,13 @@ export function PortfolioSummary({
 }: PortfolioSummaryProps) {
   const { prices } = useTradingStore();
 
-  const usdcBalance = balances.find((b) => b.asset === 'USDC');
-  const solBalance = balances.find((b) => b.asset === 'SOL');
-  const solPosition = positions.find((p) => p.asset === 'SOL');
+  // Defensive check: ensure balances and positions are arrays
+  const safeBalances = Array.isArray(balances) ? balances : [];
+  const safePositions = Array.isArray(positions) ? positions : [];
+
+  const usdcBalance = safeBalances.find((b) => b.asset === 'USDC');
+  const solBalance = safeBalances.find((b) => b.asset === 'SOL');
+  const solPosition = safePositions.find((p) => p.asset === 'SOL');
 
   // Calculate portfolio value (USDC balance + SOL position value)
   const solPrice = parseFloat(prices.SOL?.price || '0');

@@ -36,7 +36,9 @@ export function OrderForm() {
 
   console.log('OrderForm render - connected:', connected, 'isAuthenticated:', isAuthenticated);
 
-  const usdcBalance = balances.find((b) => b.asset === 'USDC');
+  // Defensive check: ensure balances is an array
+  const safeBalances = Array.isArray(balances) ? balances : [];
+  const usdcBalance = safeBalances.find((b) => b.asset === 'USDC');
   const solPrice = parseFloat(prices.SOL?.price) || 0;
 
   const handleSubmit = async (e: React.FormEvent) => {

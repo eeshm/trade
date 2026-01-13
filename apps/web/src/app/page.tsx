@@ -94,12 +94,12 @@ export default function Home() {
 
           {/* Bottom Row: Order History (Left 3/4) and Portfolio Summary (Right 1/4) */}
           <div className="lg:col-span-9 h-[450px]">
-            <OrderHistory orders={tradingStore.orders} />
+            <OrderHistory orders={Array.isArray(tradingStore.orders) ? tradingStore.orders : []} />
           </div>
           <div className="lg:col-span-3 h-[200px] lg:h-[450px]">
             <PortfolioSummary
-              balances={tradingStore.balances}
-              positions={tradingStore.positions}
+              balances={Array.isArray(tradingStore.balances) ? tradingStore.balances : []}
+              positions={Array.isArray(tradingStore.positions) ? tradingStore.positions : []}
               className="h-full"
             />
           </div>

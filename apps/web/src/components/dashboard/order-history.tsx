@@ -48,17 +48,20 @@ function OrderRow({ order, isBuy }: OrderRowProps) {
 }
 
 export function OrderHistory({ orders }: OrderHistoryProps) {
+  // Defensive check: ensure orders is an array
+  const safeOrders = Array.isArray(orders) ? orders : [];
+  
   return (
     <DashboardWrapper name="Order History" className="h-full">
       <Card className="h-full border-0 shadow-none overflow-hidden flex flex-col">
         <CardContent className="p-4 flex-1 min-h-0 flex flex-col">
           <div className="space-y-3 flex-1 overflow-y-auto pr-2">
-            {orders.length === 0 ? (
+            {safeOrders.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-muted-foreground">No orders yet</p>
               </div>
             ) : (
-              orders.map((order) => {
+              safeOrders.map((order) => {
                 const isBuy = order.side === 'buy';
                 return (
                   <OrderRow key={order.orderId} order={order} isBuy={isBuy} />

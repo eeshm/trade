@@ -71,8 +71,16 @@ export function useAuth() {
 
       console.log('Login response:', loginResponse);
       
+      // Transform backend response to match frontend expected format
+      // Backend returns { token, userId, walletAddress, expiresAt }
+      // Frontend expects { token, user: { id, walletAddress } }
+      const user = loginResponse.user || (loginResponse as any).userId ? {
+        id: (loginResponse as any).userId,
+        walletAddress: (loginResponse as any).walletAddress || publicKey.toBase58(),
+      } : null;
+      
       // Store auth state
-      setUser(loginResponse.user, loginResponse.token);
+      setUser(user, loginResponse.token);
       console.log('Auth state updated - user:', loginResponse.user, 'token:', !!loginResponse.token);
       toast.success('Logged in successfully!');
 
