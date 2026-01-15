@@ -39,6 +39,7 @@ export function OrderForm() {
   // Defensive check: ensure balances is an array
   const safeBalances = Array.isArray(balances) ? balances : [];
   const usdcBalance = safeBalances.find((b) => b.asset === 'USDC');
+  const solBalance = safeBalances.find((b) => b.asset === 'SOL');
   const solPrice = parseFloat(prices.SOL?.price) || 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -85,6 +86,25 @@ export function OrderForm() {
     ? numericAmount * solPrice
     : numericAmount / solPrice;
 
+  // Calculate available balance based on side and currency
+  const availableUSDC = parseFloat(usdcBalance?.available || '0');
+  const availableSOL = parseFloat(solBalance?.available || '0');
+
+  // Check for insufficient funds
+  const hasInsufficientFunds = (() => {
+    if (!numericAmount || numericAmount <= 0) return false;
+
+    if (side === 'buy') {
+      // Buying SOL: need USDC
+      const requiredUSDC = currency === 'USDC' ? numericAmount : numericAmount * solPrice;
+      return requiredUSDC > availableUSDC;
+    } else {
+      // Selling SOL: need SOL
+      const requiredSOL = currency === 'SOL' ? numericAmount : numericAmount / solPrice;
+      return requiredSOL > availableSOL;
+    }
+  })();
+
   return (
     <DashboardWrapper name="Place Order" className="h-full">
       <Card className="h-full overflow-hidden">
@@ -109,11 +129,14 @@ export function OrderForm() {
                 Sell SOL
               </Button>
             </div>
-            {/* Make the balance to end */}
+            {/* Available Balance */}
             <div className='flex text-xs text-muted-foreground'>
               Available to trade:
               <span className='ml-auto'>
-                {formatCurrency(usdcBalance?.available || 0)}
+                {side === 'buy'
+                  ? formatCurrency(availableUSDC)
+                  : `${availableSOL.toFixed(4)} SOL`
+                }
               </span>
             </div>
 
@@ -195,10 +218,12 @@ export function OrderForm() {
             ) : (
               <Button
                 type="submit"
-                disabled={isLoading || !size}
-                className={`w-full ${side === 'buy'
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-600 hover:bg-red-700'
+                disabled={isLoading || !size || hasInsufficientFunds}
+                className={`w-full rounded-xs ${hasInsufficientFunds
+                  ? 'bg-gray-500 hover:bg-gray-500 cursor-not-allowed'
+                  : side === 'buy'
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-600 hover:bg-red-700'
                   }`}
               >
                 {isLoading ? (
@@ -206,6 +231,8 @@ export function OrderForm() {
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                     Placing Order...
                   </>
+                ) : hasInsufficientFunds ? (
+                  'Insufficient Funds'
                 ) : (
                   `${side === 'buy' ? 'Buy' : 'Sell'} SOL`
                 )}
