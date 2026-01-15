@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { env } from './env';
+import { useAuthStore } from '@/store/auth';
 import {
   AuthNonceRequest,
   AuthNonceResponse,
@@ -14,9 +15,12 @@ import {
 
 const API_BASE_URL = env.API_URL;
 
+// Helper to get token from auth store (works outside React components)
+const getAuthToken = () => useAuthStore.getState().token;
+const clearAuthState = () => useAuthStore.getState().logout();
+
 class ApiClient {
   private client: AxiosInstance;
-  private token: string | null = null;
 
   constructor() {
     this.client = axios.create({
@@ -24,10 +28,11 @@ class ApiClient {
       timeout: 10000,
     });
  
-    // Add request interceptor for auth token
+    // Add request interceptor for auth token - reads from auth store
     this.client.interceptors.request.use((config) => {
-      if (this.token) {
-        config.headers.Authorization = `Bearer ${this.token}`;
+      const token = getAuthToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
     });
@@ -37,38 +42,12 @@ class ApiClient {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
-          // Clear token on 401
-          this.clearToken();
+          // Clear auth state on 401
+          clearAuthState();
         }
         return Promise.reject(error);
       }
     );
-
-    // Load token from localStorage on init
-    if (typeof window !== 'undefined') {
-      const savedToken = localStorage.getItem('authToken');
-      if (savedToken) {
-        this.token = savedToken;
-      }
-    }
-  }
-
-  setToken(token: string) {
-    this.token = token;
-    if(typeof window !== 'undefined') {
-      localStorage.setItem('authToken', token);
-    }
-  }
-
-  clearToken() {
-    this.token = null;
-    if(typeof window !== 'undefined') {
-      localStorage.removeItem('authToken');
-    }
-  }
-
-  getToken() {
-    return this.token;
   }
 
   // Auth endpoints
@@ -85,8 +64,7 @@ class ApiClient {
       '/auth/login',
       request
     );
-    const { token } = response.data;
-    this.setToken(token);
+    // Token is stored by the calling code via useAuthStore.setUser()
     return response.data;
   }
 
@@ -94,7 +72,7 @@ class ApiClient {
     try {
       await this.client.post('/auth/logout');
     } finally {
-      this.clearToken();
+      // Auth state is cleared by the calling code or 401 interceptor
     }
   }
 
