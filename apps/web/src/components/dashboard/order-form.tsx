@@ -204,7 +204,7 @@ export function OrderForm() {
               <div className="flex justify-between text-muted-foreground">
                 <span>Fee (0.1%):</span>
                 <span className="text-foreground">
-                  ${(currency === 'SOL' ? estimatedValue * 0.001 : numericAmount * 0.001).toFixed(2)}
+                  ${((currency === 'SOL' ? numericAmount * solPrice : numericAmount) * 0.001).toFixed(2)}
                 </span>
               </div>
             </div>
