@@ -131,15 +131,12 @@ export function PriceChart({ prices }: PriceChartProps) {
     }));
   }, []);
 
-  // Initialize chart
+  // Fetch data on mount
   useEffect(() => {
-    if (!chartContainerRef.current) return;
-
-    const initChart = async () => {
+    const loadData = async () => {
       setIsLoading(true);
       setError(null);
 
-      // Fetch historical candles
       let initialData: CandlestickData<Time>[];
       try {
         initialData = await fetchCandles();
@@ -156,127 +153,132 @@ export function PriceChart({ prices }: PriceChartProps) {
       }
 
       priceHistoryRef.current = initialData;
-
-      const chart = createChart(chartContainerRef.current!, {
-        layout: {
-          background: { type: ColorType.Solid, color: 'transparent' },
-          textColor: 'hsl(70.5, 1.5%, 70.5%)',
-        },
-        grid: {
-          vertLines: { color: 'hsl(27.4, 0.6%, 27.4%)' },
-          horzLines: { color: 'hsl(27.4, 0.6%, 27.4%)' },
-        },
-        crosshair: {
-          mode: 1,
-          vertLine: {
-            color: 'hsl(44.2, 1.7%, 44.2%)',
-            width: 1,
-            style: 3,
-          },
-          horzLine: {
-            color: 'hsl(44.2, 1.7%, 44.2%)',
-            width: 1,
-            style: 3,
-          },
-        },
-        rightPriceScale: {
-          borderColor: 'hsl(27.4, 0.6%, 27.4%)',
-        },
-        timeScale: {
-          borderColor: 'hsl(27.4, 0.6%, 27.4%)',
-          timeVisible: true,
-          secondsVisible: false,
-          tickMarkFormatter: (time: number) => {
-            const date = new Date(time * 1000);
-            return date.toLocaleTimeString('en-IN', {
-              timeZone: 'Asia/Kolkata',
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false,
-            });
-          },
-        },
-        localization: {
-          // Display times in IST (UTC+5:30) for crosshair
-          timeFormatter: (time: number) => {
-            const date = new Date(time * 1000);
-            return date.toLocaleString('en-IN', {
-              timeZone: 'Asia/Kolkata',
-              day: '2-digit',
-              month: 'short',
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false,
-            });
-          },
-        },
-        handleScroll: {
-          mouseWheel: true,
-          pressedMouseMove: true,
-        },
-        handleScale: {
-          axisPressedMouseMove: true,
-          mouseWheel: true,
-          pinch: true,
-        },
-      });
-
-      // Create series based on chart type
-      let series: ISeriesApi<'Candlestick'> | ISeriesApi<'Area'>;
-
-      if (chartType === 'candlestick') {
-        series = chart.addSeries(CandlestickSeries, {
-          upColor: '#22c55e',
-          downColor: '#ef4444',
-          borderUpColor: '#22c55e',
-          borderDownColor: '#ef4444',
-          wickUpColor: '#22c55e',
-          wickDownColor: '#ef4444',
-        });
-        series.setData(initialData);
-      } else {
-        series = chart.addSeries(AreaSeries, {
-          lineColor: '#3b82f6',
-          topColor: 'rgba(59, 130, 246, 0.4)',
-          bottomColor: 'rgba(59, 130, 246, 0.0)',
-          lineWidth: 2,
-        });
-        series.setData(convertToAreaData(initialData));
-      }
-
-      chart.timeScale().fitContent();
-
-      chartRef.current = chart;
-      seriesRef.current = series;
       setIsLoading(false);
-
-      // Handle resize
-      const handleResize = () => {
-        if (chartContainerRef.current && chartRef.current) {
-          chartRef.current.applyOptions({
-            width: chartContainerRef.current.clientWidth,
-            height: chartContainerRef.current.clientHeight,
-          });
-        }
-      };
-
-      const resizeObserver = new ResizeObserver(handleResize);
-      resizeObserver.observe(chartContainerRef.current!);
-
-      return () => {
-        resizeObserver.disconnect();
-        chart.remove();
-        chartRef.current = null;
-        seriesRef.current = null;
-      };
+      hasFetchedRef.current = true;
     };
 
-    const cleanup = initChart();
+    if (!hasFetchedRef.current) {
+      loadData();
+    }
+  }, [fetchCandles, generateFallbackData]);
+
+  // Initialize chart
+  useEffect(() => {
+    if (!chartContainerRef.current || isLoading) return;
+
+    const chart = createChart(chartContainerRef.current, {
+      layout: {
+        background: { type: ColorType.Solid, color: 'transparent' },
+        textColor: 'hsl(70.5, 1.5%, 70.5%)',
+      },
+      grid: {
+        vertLines: { color: 'hsl(27.4, 0.6%, 27.4%)' },
+        horzLines: { color: 'hsl(27.4, 0.6%, 27.4%)' },
+      },
+      crosshair: {
+        mode: 1,
+        vertLine: {
+          color: 'hsl(44.2, 1.7%, 44.2%)',
+          width: 1,
+          style: 3,
+        },
+        horzLine: {
+          color: 'hsl(44.2, 1.7%, 44.2%)',
+          width: 1,
+          style: 3,
+        },
+      },
+      rightPriceScale: {
+        borderColor: 'hsl(27.4, 0.6%, 27.4%)',
+      },
+      timeScale: {
+        borderColor: 'hsl(27.4, 0.6%, 27.4%)',
+        timeVisible: true,
+        secondsVisible: false,
+        tickMarkFormatter: (time: number) => {
+          const date = new Date(time * 1000);
+          return date.toLocaleTimeString('en-IN', {
+            timeZone: 'Asia/Kolkata',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          });
+        },
+      },
+      localization: {
+        // Display times in IST (UTC+5:30) for crosshair
+        timeFormatter: (time: number) => {
+          const date = new Date(time * 1000);
+          return date.toLocaleString('en-IN', {
+            timeZone: 'Asia/Kolkata',
+            day: '2-digit',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          });
+        },
+      },
+      handleScroll: {
+        mouseWheel: true,
+        pressedMouseMove: true,
+      },
+      handleScale: {
+        axisPressedMouseMove: true,
+        mouseWheel: true,
+        pinch: true,
+      },
+    });
+
+    // Create series based on chart type
+    let series: ISeriesApi<'Candlestick'> | ISeriesApi<'Area'>;
+    const initialData = priceHistoryRef.current;
+
+    if (chartType === 'candlestick') {
+      series = chart.addSeries(CandlestickSeries, {
+        upColor: '#22c55e',
+        downColor: '#ef4444',
+        borderUpColor: '#22c55e',
+        borderDownColor: '#ef4444',
+        wickUpColor: '#22c55e',
+        wickDownColor: '#ef4444',
+      });
+      series.setData(initialData);
+    } else {
+      series = chart.addSeries(AreaSeries, {
+        lineColor: '#3b82f6',
+        topColor: 'rgba(59, 130, 246, 0.4)',
+        bottomColor: 'rgba(59, 130, 246, 0.0)',
+        lineWidth: 2,
+      });
+      series.setData(convertToAreaData(initialData));
+    }
+
+    chart.timeScale().fitContent();
+
+    chartRef.current = chart;
+    seriesRef.current = series;
+
+    // Handle resize
+    const handleResize = () => {
+      if (chartContainerRef.current && chartRef.current) {
+        chartRef.current.applyOptions({
+          width: chartContainerRef.current.clientWidth,
+          height: chartContainerRef.current.clientHeight,
+        });
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(chartContainerRef.current);
 
     return () => {
-      cleanup.then(cleanupFn => cleanupFn?.());
+      resizeObserver.disconnect();
+      chart.remove();
+      chartRef.current = null;
+      seriesRef.current = null;
     };
-  }, [fetchCandles, generateFallbackData, chartType, convertToAreaData]);
+  }, [chartType, convertToAreaData, isLoading]);
 
   // Update chart with new price data from WebSocket
   useEffect(() => {
