@@ -10,3 +10,9 @@ export {
   closeWs,
   type WsMessage,
 } from "./websocket.ts";
+export {
+  setTestPriceForCandles,
+  processTestPriceTick,
+  getTestCurrentCandle,
+  getTestBucketStart,
+} from "./candles.ts";
