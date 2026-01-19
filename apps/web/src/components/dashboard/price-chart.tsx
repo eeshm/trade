@@ -186,6 +186,29 @@ export function PriceChart({ prices }: PriceChartProps) {
           borderColor: 'hsl(27.4, 0.6%, 27.4%)',
           timeVisible: true,
           secondsVisible: false,
+          tickMarkFormatter: (time: number) => {
+            const date = new Date(time * 1000);
+            return date.toLocaleTimeString('en-IN', {
+              timeZone: 'Asia/Kolkata',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            });
+          },
+        },
+        localization: {
+          // Display times in IST (UTC+5:30) for crosshair
+          timeFormatter: (time: number) => {
+            const date = new Date(time * 1000);
+            return date.toLocaleString('en-IN', {
+              timeZone: 'Asia/Kolkata',
+              day: '2-digit',
+              month: 'short',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            });
+          },
         },
         handleScroll: {
           mouseWheel: true,
