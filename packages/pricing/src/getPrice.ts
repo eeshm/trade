@@ -36,7 +36,6 @@ export async function getPrice(symbol:string) : Promise<Decimal> {
     ]);
 
 
-    // TODO: Implement Postgres for fallback price if redis price not available;
     if(!priceStr){
         throw new Error(`Price not available for ${upperSymbol}`);
     }
