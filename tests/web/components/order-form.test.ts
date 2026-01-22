@@ -135,7 +135,7 @@ describe('OrderForm Logic', () => {
       const fee = orderValue * feePercent;
       expect(fee).toBe(1); // $1 fee
     });
-
+ 
     test('fee is based on USDC value, not SOL amount', () => {
       const solAmount = 5;
       const solPrice = 100;

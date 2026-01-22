@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { Balance, Position, PriceData, Order } from '@/types';
 
 interface TradingStore {
@@ -20,40 +21,50 @@ interface TradingStore {
   reset: () => void;
 }
 
-export const useTradingStore = create<TradingStore>((set) => ({
-  balances: [],
-  positions: [],
-  orders: [],
-  prices: {},
-  isLoading: false,
-  error: null,
-
-  setBalances: (balances) => set({ balances }),
-  setPositions: (positions) => set({ positions }),
-  setOrders: (orders) => set({ orders }),
-  addOrder: (order) =>
-    set((state) => ({
-      orders: [order, ...state.orders],
-    })),
-  updateOrder: (orderId, updates) =>
-    set((state) => ({
-      orders: state.orders.map((o) =>
-        o.orderId === orderId ? { ...o, ...updates } : o
-      ),
-    })),
-  setPrice: (symbol, priceData) =>
-    set((state) => ({
-      prices: { ...state.prices, [symbol]: priceData },
-    })),
-  setLoading: (isLoading) => set({ isLoading }),
-  setError: (error) => set({ error }),
-  reset: () =>
-    set({
+export const useTradingStore = create<TradingStore>()(
+  persist(
+    (set) => ({
       balances: [],
       positions: [],
       orders: [],
       prices: {},
       isLoading: false,
       error: null,
+
+      setBalances: (balances) => set({ balances }),
+      setPositions: (positions) => set({ positions }),
+      setOrders: (orders) => set({ orders }),
+      addOrder: (order) =>
+        set((state) => ({
+          orders: [order, ...state.orders],
+        })),
+      updateOrder: (orderId, updates) =>
+        set((state) => ({
+          orders: state.orders.map((o) =>
+            o.orderId === orderId ? { ...o, ...updates } : o
+          ),
+        })),
+      setPrice: (symbol, priceData) =>
+        set((state) => ({
+          prices: { ...state.prices, [symbol]: priceData },
+        })),
+      setLoading: (isLoading) => set({ isLoading }),
+      setError: (error) => set({ error }),
+      reset: () =>
+        set({
+          balances: [],
+          positions: [],
+          orders: [],
+          prices: {},
+          isLoading: false,
+          error: null,
+        }),
     }),
-}));
+    {
+      name: 'trading-store',
+      storage: createJSONStorage(() => localStorage),
+      // Only persist prices - balances/orders come from API
+      partialize: (state) => ({ prices: state.prices }),
+    }
+  )
+);

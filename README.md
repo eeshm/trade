@@ -268,5 +268,4 @@ Before you ship:
 // things to look after new candle aggregation worker:
 - candle correctness
 - front-end price and candle correctness
-- frotnend tests
--  websocket reconnecting afrer reload.
+- websocket reconnecting afrer reload.

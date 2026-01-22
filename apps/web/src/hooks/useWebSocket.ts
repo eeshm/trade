@@ -21,6 +21,7 @@ export function useWebSocket({ token, enabled = true }: UseWebSocketProps) {
   const reconnectAttempts = useRef(0);
   const maxReconnectAttempts = 5;
   const reconnectDelay = useRef(1000);
+  const hasConnectedOnce = useRef(false); // Track if we've ever connected
   const [isConnected, setIsConnected] = useState(false);
 
   const tradingStore = useTradingStore();
@@ -112,6 +113,7 @@ export function useWebSocket({ token, enabled = true }: UseWebSocketProps) {
       ws.onopen = () => {
         console.log('WebSocket connected');
         setIsConnected(true);
+        hasConnectedOnce.current = true; // Mark that we've successfully connected
         reconnectAttempts.current = 0;
         reconnectDelay.current = 1000;
 
@@ -155,10 +157,11 @@ export function useWebSocket({ token, enabled = true }: UseWebSocketProps) {
         wsRef.current = null;
         setIsConnected(false);
 
-        // Only show error toast for unexpected closures (not code 1000 = normal closure)
-        // Code 1006 (abnormal closure) is common and will be handled by reconnection
-        if (event.code !== 1000 && event.code !== 1001 && reconnectAttempts.current === 0) {
-          // Only show on first disconnect, not during reconnection attempts
+        // Only show error toast if:
+        // 1. We had successfully connected before (not initial page load)
+        // 2. It's an unexpected closure (not normal close codes)
+        // 3. It's the first disconnect (not during reconnection attempts)
+        if (hasConnectedOnce.current && event.code !== 1000 && event.code !== 1001 && reconnectAttempts.current === 0) {
           toast.error('WebSocket connection lost. Reconnecting...');
         }
 
@@ -230,6 +233,19 @@ export function useWebSocket({ token, enabled = true }: UseWebSocketProps) {
       disconnect();
     };
   }, [enabled, connect, disconnect]);
+
+  // Send auth when token becomes available (after hydration from localStorage)
+  // This handles the case where WebSocket connects before token is loaded
+  useEffect(() => {
+    if (token && wsRef.current?.readyState === WebSocket.OPEN) {
+      try {
+        wsRef.current.send(JSON.stringify({ type: 'auth', token }));
+        console.log('Sent late auth after hydration');
+      } catch (error) {
+        console.error('Failed to send late auth:', error);
+      }
+    }
+  }, [token]);
 
   // Heartbeat ping
   useEffect(() => {

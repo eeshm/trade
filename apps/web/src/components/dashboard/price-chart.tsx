@@ -53,7 +53,7 @@ export function PriceChart({ prices }: PriceChartProps) {
   // Fetch historical candles from API
   const fetchCandles = useCallback(async (): Promise<CandlestickData<Time>[]> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/market/candles?asset=SOL&timeframe=1m&limit=100`);
+      const response = await fetch(`${API_BASE_URL}/market/candles?asset=SOL&timeframe=1m&limit=1000`);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch candles: ${response.status}`);

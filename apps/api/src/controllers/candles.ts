@@ -39,8 +39,8 @@ export async function getCandlesHandler(req: Request, res: Response) {
       return;
     }
 
-    // Validate limit (max 500 to prevent abuse)
-    const limit = Math.min(Math.max(1, limitParam), 500);
+    // Validate limit (max 1000 to prevent abuse)
+    const limit = Math.min(Math.max(1, limitParam), 1000);
 
     // Fetch historical candles from PostgreSQL
     const candles = await getLatestCandles(asset, timeframe, limit);

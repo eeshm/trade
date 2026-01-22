@@ -14,7 +14,7 @@ import { PortfolioSkeleton, OrderHistorySkeleton } from '@/components/ui/skeleto
 import { ChartErrorBoundary } from '@/components/error-boundary';
 
 export default function Home() {
-  const { isAuthenticated, token } = useAuth();
+  const { isAuthenticated, token, hasHydrated } = useAuth();
   const [isLoadingPortfolio, setIsLoadingPortfolio] = useState(false);
   const [isLoadingOrders, setIsLoadingOrders] = useState(false);
   const setBalances = useTradingStore((state) => state.setBalances);
@@ -27,9 +27,10 @@ export default function Home() {
   const positions = useTradingStore((state) => state.positions);
   const prices = useTradingStore((state) => state.prices);
 
-  // WebSocket is always enabled for prices, token is optional for auth
+  // WebSocket connection - wait for hydration before using token
+  // This fixes the race condition where WebSocket connects before localStorage is loaded
   const { isConnected: wsConnected, subscribe } = useWebSocket({
-    token,
+    token: hasHydrated ? token : null, // Only pass token after hydration
     enabled: true, // Always enabled for price feed
   });
 

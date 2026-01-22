@@ -12,6 +12,7 @@ export function useAuth() {
   const user = useAuthStore((state) => state.user);
   const token = useAuthStore((state) => state.token);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const hasHydrated = useAuthStore((state) => state._hasHydrated);
   const setUser = useAuthStore((state) => state.setUser);
   const logoutStore = useAuthStore((state) => state.logout);
 
@@ -113,6 +114,7 @@ export function useAuth() {
     user,
     token,
     isAuthenticated,
+    hasHydrated, // True when localStorage has been loaded
     login,
     logout,
     getNonce,
