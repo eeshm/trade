@@ -256,6 +256,18 @@ export function PriceChart({ prices }: PriceChartProps) {
 
     chart.timeScale().fitContent();
 
+    // Auto-scroll to show recent data (last 60 candles)
+    // This prevents showing entire history on initial load
+    setTimeout(() => {
+      const dataLength = initialData.length;
+      if (dataLength > 0) {
+        chart.timeScale().setVisibleLogicalRange({
+          from: Math.max(0, dataLength - 60), // Show last 60 candles
+          to: dataLength - 1,
+        });
+      }
+    }, 0);
+
     chartRef.current = chart;
     seriesRef.current = series;
 
@@ -309,6 +321,15 @@ export function PriceChart({ prices }: PriceChartProps) {
         (seriesRef.current as ISeriesApi<'Area'>).update({
           time: newCandle.time,
           value: newCandle.close,
+        });
+      }
+
+      // Auto-scroll to show latest data when new candle appears
+      if (chartRef.current) {
+        const dataLength = priceHistoryRef.current.length;
+        chartRef.current.timeScale().setVisibleLogicalRange({
+          from: Math.max(0, dataLength - 60),
+          to: dataLength - 1,
         });
       }
     } else {
