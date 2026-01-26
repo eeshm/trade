@@ -19,7 +19,7 @@ This project serves as educational infrastructure for the Solana ecosystem, show
 
 **For developers:**
 - Reference implementation for Solana wallet authentication
-- Shows production-grade Pyth Network integration via Helius
+- Shows production-grade Pyth Network integration
 - Demonstrates concurrent trading logic with ACID guarantees
 - Reusable packages: auth, pricing, trading engine
 
@@ -36,7 +36,7 @@ This project serves as educational infrastructure for the Solana ecosystem, show
                     ┌─────────────┐
                     │ Pyth Network│
                     └──────┬──────┘
-                           │ (via Helius)
+                           │
                     ┌──────▼───────┐
                     │Price Worker  │
                     └──────┬───────┘
@@ -68,7 +68,7 @@ This project serves as educational infrastructure for the Solana ecosystem, show
 
 **Price flow:**
 ```
-Pyth (via Helius) → Price Worker → Redis (execution price)
+Pyth → Price Worker → Redis (execution price)
                                       ↓
                                 Candle Worker → PostgreSQL (OHLC history)
 ```
