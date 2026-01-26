@@ -27,7 +27,7 @@ export default function RootLayout({
         <html lang="en" className="bg-gray-50 dark:bg-background">
             <body className={`${geistSans.variable} ${geistMono.variable} antialiased h-full flex flex-col`}>
                 <Providers>
-                    <main className="flex-1 container mx-auto p-4">
+                    <main className="flex-1 px-1">
                         {children}
                     </main>
                     <Toaster position="bottom-right" />
