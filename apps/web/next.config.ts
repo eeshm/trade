@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Standalone output for Docker deployment
+  output: 'standalone',
+
   // Turbopack config (Next.js 16+ default bundler)
   turbopack: {
     resolveAlias: {

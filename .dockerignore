@@ -1,0 +1,41 @@
+# Docker ignore file for faster builds
+# Ignore these files when building Docker images
+
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+.next
+dist
+build
+.turbo
+
+# Version control
+.git
+.gitignore
+
+# Development files
+*.md
+!README.md
+*.log
+.env*
+!.env.example
+
+# IDE
+.vscode
+.idea
+.cursor
+
+# Testing
+coverage
+tests
+**/*.test.ts
+**/*.spec.ts
+vitest.config.*
+
+# Misc
+.DS_Store
+*.pem
+scripts*
+local.md
