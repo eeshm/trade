@@ -11,5 +11,13 @@
   ],
   "exclude": [
     "node_modules"
+  ],
+  "references": [
+    {
+      "path": "../db"
+    },
+    {
+      "path": "../redis"
+    }
   ]
 }
