@@ -26,7 +26,7 @@
         "supertest": "^7.0.0",
         "turbo": "^2.7.0",
         "tweetnacl": "^1.0.3",
-        "typescript": "^5.4.5",
+        "typescript": "5.4.5",
         "vitest": "^1.6.0",
         "ws": "^8.14.2",
       },
@@ -55,7 +55,7 @@
         "@types/node": "^22.15.3",
         "@types/uuid": "^11.0.0",
         "eslint": "^9.39.1",
-        "typescript": "^5.4.5",
+        "typescript": "5.4.5",
       },
     },
     "apps/web": {
@@ -71,6 +71,7 @@
         "@solana/wallet-adapter-react-ui": "^0.9.39",
         "@solana/wallet-adapter-solflare": "^0.6.32",
         "@solana/web3.js": "^1.98.4",
+        "@vercel/analytics": "^1.6.1",
         "axios": "^1.13.2",
         "bs58": "^6.0.0",
         "class-variance-authority": "^0.7.1",
@@ -97,7 +98,7 @@
         "eslint": "^9",
         "eslint-config-next": "16.1.1",
         "tailwindcss": "^4",
-        "typescript": "^5",
+        "typescript": "5.4.5",
       },
     },
     "packages/auth": {
@@ -115,7 +116,7 @@
         "@repo/typescript-config": "*",
         "@types/node": "^22.15.3",
         "eslint": "^9.39.1",
-        "typescript": "^5.4.5",
+        "typescript": "5.4.5",
       },
     },
     "packages/db": {
@@ -133,7 +134,7 @@
         "@types/pg": "^8.11.6",
         "eslint": "^9.39.1",
         "prisma": "^6.19.1",
-        "typescript": "^5.4.5",
+        "typescript": "5.4.5",
       },
     },
     "packages/env": {
@@ -147,7 +148,7 @@
         "@repo/typescript-config": "*",
         "@types/node": "^22.15.3",
         "eslint": "^9.39.1",
-        "typescript": "^5.4.5",
+        "typescript": "5.4.5",
       },
     },
     "packages/eslint-config": {
@@ -163,7 +164,7 @@
         "eslint-plugin-react-hooks": "^5.2.0",
         "eslint-plugin-turbo": "^2.6.0",
         "globals": "^16.5.0",
-        "typescript": "^5.4.5",
+        "typescript": "5.4.5",
         "typescript-eslint": "^8.49.0",
       },
     },
@@ -179,7 +180,7 @@
         "@repo/typescript-config": "*",
         "@types/node": "^22.15.3",
         "eslint": "^9.39.1",
-        "typescript": "^5.4.5",
+        "typescript": "5.4.5",
       },
     },
     "packages/pricing": {
@@ -194,7 +195,7 @@
         "@repo/typescript-config": "*",
         "@types/node": "^22.15.3",
         "eslint": "^9.39.1",
-        "typescript": "^5.4.5",
+        "typescript": "5.4.5",
       },
     },
     "packages/redis": {
@@ -208,7 +209,7 @@
         "@repo/typescript-config": "*",
         "@types/node": "^22.15.3",
         "eslint": "^9.39.1",
-        "typescript": "^5.4.5",
+        "typescript": "5.4.5",
       },
     },
     "packages/trading": {
@@ -224,7 +225,7 @@
         "@repo/typescript-config": "*",
         "@types/node": "^22.15.3",
         "eslint": "^9.39.1",
-        "typescript": "^5.4.5",
+        "typescript": "5.4.5",
       },
     },
     "packages/typescript-config": {
@@ -245,7 +246,7 @@
         "@types/react": "19.2.2",
         "@types/react-dom": "19.2.2",
         "eslint": "^9.39.1",
-        "typescript": "^5.4.5",
+        "typescript": "5.4.5",
       },
     },
     "packages/utils": {
@@ -256,7 +257,7 @@
         "@repo/typescript-config": "*",
         "@types/node": "^22.15.3",
         "eslint": "^9.39.1",
-        "typescript": "^5.4.5",
+        "typescript": "5.4.5",
       },
     },
     "workers/candle-aggregation": {
@@ -273,7 +274,7 @@
         "@repo/typescript-config": "*",
         "@types/node": "^20.0.0",
         "tsx": "^4.0.0",
-        "typescript": "^5.0.0",
+        "typescript": "5.4.5",
       },
     },
     "workers/price-ingestion": {
@@ -289,7 +290,7 @@
         "@repo/typescript-config": "*",
         "@types/node": "^20.0.0",
         "tsx": "^4.0.0",
-        "typescript": "^5.0.0",
+        "typescript": "5.4.5",
       },
     },
   },
@@ -1037,6 +1038,8 @@
     "@unrs/resolver-binding-win32-ia32-msvc": ["@unrs/resolver-binding-win32-ia32-msvc@1.11.1", "", { "os": "win32", "cpu": "ia32" }, "sha512-DCEI6t5i1NmAZp6pFonpD5m7i6aFrpofcp4LA2i8IIq60Jyo28hamKBxNrZcyOwVOZkgsRp9O2sXWBWP8MnvIQ=="],
 
     "@unrs/resolver-binding-win32-x64-msvc": ["@unrs/resolver-binding-win32-x64-msvc@1.11.1", "", { "os": "win32", "cpu": "x64" }, "sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g=="],
+
+    "@vercel/analytics": ["@vercel/analytics@1.6.1", "", { "peerDependencies": { "@remix-run/react": "^2", "@sveltejs/kit": "^1 || ^2", "next": ">= 13", "react": "^18 || ^19 || ^19.0.0-rc", "svelte": ">= 4", "vue": "^3", "vue-router": "^4" }, "optionalPeers": ["@remix-run/react", "@sveltejs/kit", "next", "react", "svelte", "vue", "vue-router"] }, "sha512-oH9He/bEM+6oKlv3chWuOOcp8Y6fo6/PSro8hEkgCW3pu9/OiCXiUpRUogDh3Fs3LH2sosDrx8CxeOLBEE+afg=="],
 
     "@vitejs/plugin-react": ["@vitejs/plugin-react@5.1.2", "", { "dependencies": { "@babel/core": "^7.28.5", "@babel/plugin-transform-react-jsx-self": "^7.27.1", "@babel/plugin-transform-react-jsx-source": "^7.27.1", "@rolldown/pluginutils": "1.0.0-beta.53", "@types/babel__core": "^7.20.5", "react-refresh": "^0.18.0" }, "peerDependencies": { "vite": "^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0" } }, "sha512-EcA07pHJouywpzsoTUqNh5NwGayl2PPVEJKUSinGGSxFGYn+shYbqMGBg6FXDqgXum9Ou/ecb+411ssw8HImJQ=="],
 
@@ -2404,7 +2407,7 @@
 
     "typed-array-length": ["typed-array-length@1.0.7", "", { "dependencies": { "call-bind": "^1.0.7", "for-each": "^0.3.3", "gopd": "^1.0.1", "is-typed-array": "^1.1.13", "possible-typed-array-names": "^1.0.0", "reflect.getprototypeof": "^1.0.6" } }, "sha512-3KS2b+kL7fsuk/eJZ7EQdnEmQoaho/r6KUef7hxvltNA5DR8NAUM+8wJMbJyZ4G9/7i3v5zPBIMN5aybAh2/Jg=="],
 
-    "typescript": ["typescript@5.9.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-CWBzXQrc/qOkhidw1OzBTQuYRbfyxDXJMVJ1XNwUHGROVmuaeiEm3OslpZ1RV96d7SKKjZKrSJu3+t/xlw3R9A=="],
+    "typescript": ["typescript@5.4.5", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ=="],
 
     "typescript-eslint": ["typescript-eslint@8.53.0", "", { "dependencies": { "@typescript-eslint/eslint-plugin": "8.53.0", "@typescript-eslint/parser": "8.53.0", "@typescript-eslint/typescript-estree": "8.53.0", "@typescript-eslint/utils": "8.53.0" }, "peerDependencies": { "eslint": "^8.57.0 || ^9.0.0", "typescript": ">=4.8.4 <6.0.0" } }, "sha512-xHURCQNxZ1dsWn0sdOaOfCSQG0HKeqSj9OexIxrz6ypU6wHYOdX2I3D2b8s8wFSsSOYJb+6q283cLiLlkEsBYw=="],
 
