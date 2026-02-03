@@ -5,8 +5,7 @@
     "incremental": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "allowImportingTsExtensions": true,
-    "noEmit": true
+    "allowImportingTsExtensions": false
   },
   "include": [
     "src/**/*.ts"
