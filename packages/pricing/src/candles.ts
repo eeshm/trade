@@ -165,12 +165,7 @@ export async function processPriceTick(
     await persistCandle(existingCandle);
     closedCandle = existingCandle;
     candleClosed = true;
-    
-    console.log(
-      `[CANDLE] Closed ${asset} ${timeframe} candle: ` +
-      `O=${existingCandle.open} H=${existingCandle.high} L=${existingCandle.low} C=${existingCandle.close} ` +
-      `at ${new Date(existingCandle.bucketStart).toISOString()}`
-    );
+  
   }
   
   // Calculate new candle or update existing

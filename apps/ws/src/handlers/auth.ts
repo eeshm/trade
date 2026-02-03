@@ -13,11 +13,9 @@ export async function handleAuth(
   token: string
 ): Promise<void> {
   try {
-    console.log("[WS Auth] Validating token...");
     const session = await validateSession(token);
 
     if (!session.valid || !session.userId) {
-      console.log("[WS Auth] Session invalid");
       sendMessage(ws, {
         type: "auth",
         success: false,
@@ -29,7 +27,6 @@ export async function handleAuth(
     // Attach user info to socket
     ws.userId = session.userId;
 
-    console.log(`[WS Auth] User ${session.userId} authenticated successfully`);
     sendMessage(ws, { type: "auth", success: true });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Auth failed";
@@ -49,11 +46,7 @@ export function isAuthenticated(ws: AuthenticatedWebSocket): boolean {
  * Send message to client
  */
 export function sendMessage(ws: AuthenticatedWebSocket, message: ServerMessage): void {
-  console.log("[WS] Attempting to send message:", JSON.stringify(message), "ws.readyState:", ws.readyState, "OPEN:", ws.OPEN);
   if (ws.readyState === ws.OPEN) {
-    console.log("[WS] Socket is OPEN, sending message");
     ws.send(JSON.stringify(message));
-  } else {
-    console.log("[WS] Socket not OPEN, cannot send message. readyState:", ws.readyState);
   }
 }

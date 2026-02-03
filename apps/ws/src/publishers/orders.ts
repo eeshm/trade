@@ -20,7 +20,6 @@ export async function startOrderPublisher(wss: WebSocketServer): Promise<void> {
 
   // Subscribe to order filled events
   await subscriber.subscribe(redisKeys.CHANNELS.orderFilled(), (message) => {
-    console.log(`[WS OrderPublisher] Received message on orderFilled channel:`, message);
     try {
       const event: OrderFilledEvent = JSON.parse(message);
       broadcastOrderFilled(wss, event);
@@ -33,7 +32,6 @@ export async function startOrderPublisher(wss: WebSocketServer): Promise<void> {
   await subscriber.subscribe(
     redisKeys.CHANNELS.portfolioUpdate(),
     (message) => {
-      console.log(`[WS OrderPublisher] Received message on portfolioUpdate channel:`, message);
       try {
         const event = JSON.parse(message) as PortfolioUpdateEvent;
         broadcastPortfolioUpdate(wss, event);
@@ -43,27 +41,17 @@ export async function startOrderPublisher(wss: WebSocketServer): Promise<void> {
     }
   );
   
-  console.log("[WS] Order publisher started");
 }
 function broadcastOrderFilled(
   wss: WebSocketServer,
   event: OrderFilledEvent
 ): void {
-  console.log(`[WS Broadcast] Order filled event received for userId: ${event.userId} (type: ${typeof event.userId})`);
-  console.log(`[WS Broadcast] Total connected clients: ${wss.clients.size}`);
-  
   wss.clients.forEach((client) => {
     const ws = client as AuthenticatedWebSocket;
-    console.log(`[WS Broadcast] Checking client - userId: ${ws.userId} (type: ${typeof ws.userId}), subscriptions: ${Array.from(ws.subscriptions || []).join(',')}, readyState: ${ws.readyState}`);
     
-    const isOpen = ws.readyState === ws.OPEN;
-    const userMatch = ws.userId === event.userId;
-    const hasSubscription = ws.subscriptions?.has("orders");
-    
-    console.log(`[WS Broadcast] isOpen: ${isOpen}, userMatch: ${userMatch}, hasSubscription: ${hasSubscription}`);
-    
-    if (isOpen && userMatch && hasSubscription) {
-      console.log(`[WS Broadcast] Sending order_filled to user ${ws.userId}`);
+    if (ws.readyState === ws.OPEN && 
+        ws.userId === event.userId && 
+        ws.subscriptions?.has("orders")) {
       sendMessage(ws, {
         type: "order_filled",
         orderId: event.orderId,
@@ -79,21 +67,12 @@ function broadcastPortfolioUpdate(
   wss: WebSocketServer,
   event: PortfolioUpdateEvent
 ): void {
-  console.log(`[WS Broadcast] Portfolio update event received for userId: ${event.userId} (type: ${typeof event.userId})`);
-  console.log(`[WS Broadcast] Total connected clients: ${wss.clients.size}`);
-  
   wss.clients.forEach((client) => {
     const ws = client as AuthenticatedWebSocket;
-    console.log(`[WS Broadcast] Checking client - userId: ${ws.userId} (type: ${typeof ws.userId}), subscriptions: ${Array.from(ws.subscriptions || []).join(',')}, readyState: ${ws.readyState}`);
     
-    const isOpen = ws.readyState === ws.OPEN;
-    const userMatch = ws.userId === event.userId;
-    const hasSubscription = ws.subscriptions?.has("portfolio");
-    
-    console.log(`[WS Broadcast] isOpen: ${isOpen}, userMatch: ${userMatch}, hasSubscription: ${hasSubscription}`);
-    
-    if (isOpen && userMatch && hasSubscription) {
-      console.log(`[WS Broadcast] Sending portfolio update to user ${ws.userId}`);
+    if (ws.readyState === ws.OPEN && 
+        ws.userId === event.userId && 
+        ws.subscriptions?.has("portfolio")) {
       sendMessage(ws, {
         type: "portfolio",
         balances: event.balances,

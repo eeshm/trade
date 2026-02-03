@@ -30,24 +30,19 @@ async function main() {
     if (!isHealthy) {
       throw new Error("Redis is not healthy");
     }
-    console.log("[CANDLE-WORKER] Redis initialized and healthy.");
   } catch (error) {
-    console.error("[CANDLE-WORKER] Failed to initialize Redis:", error);
     throw error;
   }
 
   // Initialize PostgreSQL (for candle persistence)
   try {
     await initDb();
-    console.log("[CANDLE-WORKER] Database initialized for candle persistence.");
   } catch (error) {
-    console.error("[CANDLE-WORKER] Failed to initialize database:", error);
     throw error;
   }
 
   // Start subscribing to price updates
   await subscribeToPrice();
-  console.log("[CANDLE-WORKER] Subscribed to price updates. Processing candles...");
 
   // Graceful shutdown
   const shutdown = async (signal: string) => {

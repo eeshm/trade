@@ -70,7 +70,6 @@ export function useAuth() {
         nonce,
       });
 
-      console.log('Login response:', loginResponse);
       
       // Transform backend response to match frontend expected format
       // Backend returns { token, userId, walletAddress, expiresAt }

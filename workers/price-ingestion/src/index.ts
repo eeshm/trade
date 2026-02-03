@@ -18,7 +18,6 @@ const PRICE_UPDATE_INTERVAL_MS = 10 * 1000; // 10 seconds
  */
 
 async function main() {
-  console.log("[WORKER] Initializing price ingestion worker...");
 
   try {
     await initRedis();
@@ -27,7 +26,6 @@ async function main() {
       throw new Error("Redis is not healthy");
     }
 
-    console.log("[WORKER] Redis initialized and healthy.");
   } catch (error) {
     console.error("[WORKER] Failed to initialize Redis:", error);
     throw error;
@@ -51,9 +49,7 @@ async function main() {
       // Track for logging
       const priceStr = price.toString();
       if (priceStr !== lastPrice) {
-        console.log(
-          `[${timestamp}] [WORKER] [Iteration ${iteration}] Updated SOL price: $${priceStr}`
-        );
+
         lastPrice = priceStr;
       }
       if (iteration % 6 === 0) {
@@ -64,7 +60,7 @@ async function main() {
       }
     } catch (error) {
       console.error(
-        `[${timestamp}] [WORKER] [Iteration ${iteration}] Error during price ingestion:`,
+        `[WORKER] Error during price ingestion:`,
         error
       );
     }

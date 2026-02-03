@@ -31,7 +31,6 @@ export async function startPricePublisher(wss:WebSocketServer): Promise<void> {
             console.error("[WS] [PricePublisher] Failed to process price update:", error);
         }
     });
-    console.log("[WS] [PricePublisher] Subscribed to price updates");
 }
 
 

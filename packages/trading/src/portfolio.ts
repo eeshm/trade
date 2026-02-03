@@ -56,7 +56,6 @@ export async function initPortfolio(userId: number): Promise<void> {
     });
     
     if (existing) {
-      console.log(`Portfolio already initialized for user ${userId}`);
       return;
     }
     // Create initial balances for all assets

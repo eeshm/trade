@@ -15,15 +15,11 @@ export function handleConnection(ws: AuthenticatedWebSocket): void {
   ws.isAlive = true;
   ws.subscriptions = new Set();
 
-  console.log("[WS] New connection established");
-
   // Handle incoming messages
   ws.on("message", async (data) => {
     try {
       const dataStr = data.toString();
-      console.log("[WS] Received message:", dataStr);
       const message: ClientMessage = JSON.parse(dataStr);
-      console.log("[WS] Parsed message type:", message.type);
       await handleMessage(ws, message);
     } catch (error) {
       console.error("[WS] Error processing message:", error);
@@ -36,7 +32,7 @@ export function handleConnection(ws: AuthenticatedWebSocket): void {
     ws.isAlive = true;
   });
   ws.on("close", () => {
-    console.log(`[WS] Connection closed (userId: ${ws.userId} ?? "anonymous")`);
+    // Cleanup logic if validation needed
   });
   ws.on("error", (error) => {
     console.error("[WS] Connection error:", error);

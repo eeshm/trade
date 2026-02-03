@@ -41,7 +41,6 @@ export function handleSubscribe(
     type: "subscribed",
     channel,
   });
-  console.log(`[WS] Client subscribed to ${channel}`);
 }
 
 /**
@@ -66,6 +65,5 @@ export function handleUnsubscribe(
       type: "unsubscribed",
       channel,
     });
-    console.log(`[WS] Client unsubscribed from ${channel}`);
   }
 }

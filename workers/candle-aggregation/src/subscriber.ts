@@ -59,9 +59,6 @@ export async function subscribeToPrice(): Promise<void> {
           isComplete: true,
         });
         
-        console.log(
-          `[CANDLE-WORKER] Persisted ${priceEvent.symbol} 1m candle at ${new Date(candleResult.closedCandle.bucketStart).toISOString()}`
-        );
       }
     } catch (error) {
       console.error("[CANDLE-WORKER] Error processing price update:", error);
@@ -69,5 +66,4 @@ export async function subscribeToPrice(): Promise<void> {
     }
   });
   
-  console.log(`[CANDLE-WORKER] Listening to channel: ${channel}`);
 }
