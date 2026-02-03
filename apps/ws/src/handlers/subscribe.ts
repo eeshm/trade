@@ -2,9 +2,9 @@
  * Subscription Handler
  */
 
-import type { AuthenticatedWebSocket, SubscriptionChannel } from "../types.ts";
-import { sendMessage, isAuthenticated } from "./auth.ts";
-import { SUBSCRIPTION_CHANNELS } from "../types.ts";
+import type { AuthenticatedWebSocket, SubscriptionChannel } from "../types.js";
+import { sendMessage, isAuthenticated } from "./auth.js";
+import { SUBSCRIPTION_CHANNELS } from "../types.js";
 
 /**
  * Handle subscribe request

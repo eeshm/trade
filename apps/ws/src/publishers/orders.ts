@@ -7,8 +7,8 @@
 import { client, client as redis } from "@repo/redis";
 import type { OrderFilledEvent, PortfolioUpdateEvent } from "@repo/events";
 import { redisKeys } from "@repo/redis";
-import type { AuthenticatedWebSocket } from "../types.ts";
-import { sendMessage } from "../handlers/auth.ts";
+import type { AuthenticatedWebSocket } from "../types.js";
+import { sendMessage } from "../handlers/auth.js";
 import type { WebSocketServer } from "ws";
 
 /**
