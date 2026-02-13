@@ -8,7 +8,6 @@ import orderRouter from "./routes/orders.js";
 import portfolioRouter from "./routes/portfolio.js";
 import marketRouter from "./routes/market.js";
 import { applySecurity } from "./middlewares/index.js";
-import { seedDevelopmentPrices } from "@repo/pricing";
 
 export function createApp(): Express {
   const app = express();

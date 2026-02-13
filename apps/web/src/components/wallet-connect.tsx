@@ -81,7 +81,7 @@ export function WalletConnect({ className }: WalletConnectProps) {
       <Button
         onClick={() => setVisible(true)}
         variant="secondary"
-        className={cn("font-medium rounded-xs w-32 h-8", className)}
+        className={cn("font-medium rounded-xs w-32 h-10", className)}
       >
         Connect Wallet
       </Button>

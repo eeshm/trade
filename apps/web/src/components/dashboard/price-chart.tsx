@@ -35,7 +35,7 @@ interface CandlesResponse {
   currentCandle: CandleData | null;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+const MAX_HISTORY_CANDLES = 1000;
 
 export function PriceChart({ prices }: PriceChartProps) {
   const [chartType, setChartType] = useState<ChartType>('area');
@@ -54,7 +54,7 @@ export function PriceChart({ prices }: PriceChartProps) {
   // Fetch historical candles from API
   const fetchCandles = useCallback(async (): Promise<CandlestickData<Time>[]> => {
     try {
-      const response = await fetch(`${API_BASE_URL}/market/candles?asset=SOL&timeframe=1m&limit=1000`);
+      const response = await fetch('/api/market/candles?asset=SOL&timeframe=1m&limit=1000');
 
       if (!response.ok) {
         throw new Error(`Failed to fetch candles: ${response.status}`);
@@ -98,32 +98,6 @@ export function PriceChart({ prices }: PriceChartProps) {
     }
   }, []);
 
-  // Generate fallback data if API fails (for development)
-  const generateFallbackData = useCallback((): CandlestickData<Time>[] => {
-    const basePrice = currentPrice || 230;
-    const data: CandlestickData<Time>[] = [];
-    const now = Math.floor(Date.now() / 1000);
-    const candleInterval = 60; // 1-minute candles
-
-    for (let i = 59; i >= 0; i--) {
-      const time = (now - i * candleInterval) as Time;
-      const open = basePrice + (Math.random() - 0.5) * 10;
-      const close = open + (Math.random() - 0.5) * 5;
-      const high = Math.max(open, close) + Math.random() * 2;
-      const low = Math.min(open, close) - Math.random() * 2;
-
-      data.push({
-        time,
-        open: parseFloat(open.toFixed(2)),
-        high: parseFloat(high.toFixed(2)),
-        low: parseFloat(low.toFixed(2)),
-        close: parseFloat(close.toFixed(2)),
-      });
-    }
-
-    return data;
-  }, [currentPrice]);
-
   // Convert candlestick data to area data
   const convertToAreaData = useCallback((candleData: CandlestickData<Time>[]): SingleValueData<Time>[] => {
     return candleData.map(candle => ({
@@ -137,31 +111,28 @@ export function PriceChart({ prices }: PriceChartProps) {
     const loadData = async () => {
       setIsLoading(true);
       setError(null);
-
-      let initialData: CandlestickData<Time>[];
       try {
-        initialData = await fetchCandles();
+        const initialData = await fetchCandles();
 
-        // If no candles from API yet, use fallback
         if (initialData.length === 0) {
-          console.log('No candles from API yet, using fallback data');
-          initialData = generateFallbackData();
+          setTimeout(loadData, 2000);
+          return;
         }
-      } catch (err) {
-        console.warn('Using fallback data due to API error:', err);
-        setError('Using simulated data - candle history will appear once available');
-        initialData = generateFallbackData();
-      }
 
-      priceHistoryRef.current = initialData;
-      setIsLoading(false);
-      hasFetchedRef.current = true;
+        priceHistoryRef.current = initialData.slice(-MAX_HISTORY_CANDLES);
+        setIsLoading(false);
+        hasFetchedRef.current = true;
+      } catch (err) {
+        console.warn('Candle history unavailable, retrying...', err);
+        setError('Waiting for candle history...');
+        setTimeout(loadData, 2000);
+      }
     };
 
     if (!hasFetchedRef.current) {
       loadData();
     }
-  }, [fetchCandles, generateFallbackData]);
+  }, [fetchCandles]);
 
   // Initialize chart
   useEffect(() => {
@@ -315,6 +286,9 @@ export function PriceChart({ prices }: PriceChartProps) {
         close: currentPrice,
       };
       priceHistoryRef.current.push(newCandle);
+      if (priceHistoryRef.current.length > MAX_HISTORY_CANDLES) {
+        priceHistoryRef.current = priceHistoryRef.current.slice(-MAX_HISTORY_CANDLES);
+      }
 
       if (chartType === 'candlestick') {
         (seriesRef.current as ISeriesApi<'Candlestick'>).update(newCandle);
