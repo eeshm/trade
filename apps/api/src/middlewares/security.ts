@@ -121,6 +121,7 @@ function getAllowedOrigins(): string[] {
       return [
         process.env.FRONTEND_URL,
         "https://paper-fun.vercel.app",
+        "https://paperfun.eeshm.me",
         process.env.ADMIN_URL,
       ].filter(Boolean) as string[];
 
