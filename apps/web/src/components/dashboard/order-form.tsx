@@ -171,7 +171,7 @@ export function OrderForm() {
                 <div className="absolute right-1 top-1 bottom-1">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-full gap-1 text-xs font-medium px-2">
+                      <Button type="button" variant="ghost" size="sm" className="h-full gap-1 text-xs font-medium px-2">
                         {currency}
                         <ChevronDown className="h-3 w-3" />
                       </Button>

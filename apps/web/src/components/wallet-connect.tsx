@@ -81,6 +81,7 @@ export function WalletConnect({ className }: WalletConnectProps) {
   if (!walletReady) {
     return (
       <Button
+        type="button"
         onClick={() => setVisible(true)}
         variant="secondary"
         className={cn("font-medium rounded-xs w-32 h-10", className)}
@@ -94,6 +95,7 @@ export function WalletConnect({ className }: WalletConnectProps) {
   if (!isAuthenticated) {
     return (
       <Button
+        type="button"
         onClick={handleSignIn}
         variant="secondary"
         className={cn("font-medium rounded-xs w-32 h-8", className)}
@@ -107,7 +109,7 @@ export function WalletConnect({ className }: WalletConnectProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="font-mono outline-0 h-8  w-32 hover:border-none border-none rounded-xs hover:outline-0 hover:bg-border hover:cursor-pointer bg-border/80">
+        <Button type="button" variant="outline" className="font-mono outline-0 h-8  w-32 hover:border-none border-none rounded-xs hover:outline-0 hover:bg-border hover:cursor-pointer bg-border/80">
           {walletAddress ? `${walletAddress.slice(0, 4)}...${walletAddress.slice(-6)}` : 'Connected'}
         </Button>
       </DropdownMenuTrigger>
