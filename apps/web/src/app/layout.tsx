@@ -18,9 +18,9 @@ export const metadata = {
     title: 'paper.fun',
     description: 'Paper trading for Solana - practice with zero risk',
     icons: {
-        icon: '/logo.svg?v=1',
-        shortcut: '/logo.svg?v=1',
-        apple: '/logo.svg?v=1',
+        icon: '/Logo.svg?v=1',
+        shortcut: '/Logo.svg?v=1',
+        apple: '/Logo.svg?v=1',
     },
 };
 
